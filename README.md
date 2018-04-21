@@ -12,7 +12,38 @@ Estas instrucciones le permitirán obtener una copia del proyecto en funcionamie
 * DJango 1.10
 * PostgreSQL
 
-## Autores
+### Configuración de desarrollo
+
+```
+mkdir TicketList
+cd TicketList
+virtualenv .
+/Scripts/activate
+```
+
+Instalación de DJango
+
+```
+pip install django==1.10
+```
+
+Clonar el proyecto
+
+```
+git clone https://github.com/desarrollapy/ticketList.git
+```
+
+Ejecutar el proyecto
+```
+cd ticketList
+python manage.py runserver
+```
+
+
+Luego ingrese a [localhost](http://localhost:8000/)
+
+
+### Autores
 
 * **Juan Britez** - [desarrolla](https://github.com/juanrybritez)
 * **Emilce Fernandez** - [desarrolla](https://github.com/juanrybritez)
