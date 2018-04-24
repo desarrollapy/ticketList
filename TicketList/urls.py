@@ -21,8 +21,9 @@ from django.conf import settings
 from ticket import views
 
 urlpatterns = [
-    url(r'^admin/', admin.site.urls),
-    url(r'^$', views.inicio, name='inicio')
+    # url(r'^admin/', admin.site.urls),
+    url(r'^$', views.login_page, name='login'),
+    url(r'^inicio$', views.inicio, name='inicio')
 ]
 
 
