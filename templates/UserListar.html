@@ -1,0 +1,95 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+    <div class="container-fluid">
+        <ol class="breadcrumb" padding="6px">
+            <li><a href="/main">Principal</a></li>
+            <li><a href="/usuario/listar">Usuarios</a></li>
+        </ol>
+        <div class="row">
+            <div class="col-lg-12">
+                <h1 class="page-header">Usuarios Registrados</h1>
+            </div>
+            <!-- /.col-lg-12 -->
+        </div>
+
+        <!--Tabla para listar los usuarios.-->
+        <div class="panel-body">
+            <div class="dataTable_wrapper">
+                <table class="table table-hover" id="ListarUsuarios">
+                    <thead>
+                    <tr>
+                        <th>Email</th>
+                        <th>Usuario</th>
+                        <th>Nombre</th>
+                        <th>Apellido</th>
+                        <th>Estado</th>
+                        <th></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+
+                    <!--Datos de los usuarios-->
+                    {% for usuario in usuariosRegistrados %}
+
+                        {% if usuario.is_active %}
+
+                            <!--Si esta activo, muestra una fila en verde.-->
+                            <tr class="success">
+                                <td>{{ usuario.email }}</td>
+                                <td>{{ usuario.username }}</td>
+                                <td>{{ usuario.nombre }}</td>
+                                <td>{{ usuario.apellido }}</td>
+                                <td>Activo<i class="fa fa-check fa-fw"></i></td>
+
+                                <!--Botón Acción en fila de la tabla.-->
+                                <td>
+
+                                    <a href="/usuario/detallar/{{ usuario.id }}" class="btn btn-sq-xs btn-primary">
+                                        <i class="fa fa-pencil fa-1x"></i>
+                                    </a>
+
+                                    <a href="/usuario/CambiarPassword/{{ usuario.id }}"
+                                       class="btn btn-sq-xs btn-primary">
+                                        <i class="fa fa-key fa-1x"></i>
+                                    </a>
+
+
+                                </td>
+                            </tr>
+
+                        {% else %}
+
+                            <!--Si esta inactivo, muestra una fila en rojo.-->
+                            <tr class="danger">
+                                <td>{{ usuario.email }}</td>
+                                <td>{{ usuario.username }}</td>
+                                <td>{{ usuario.nombre }}</td>
+                                <td>{{ usuario.apellido }}</td>
+                                <td>Inactivo<i class="fa fa-remove fa-fw"></i></td>
+
+                                <!--Botón Acción en fila de la tabla.-->
+                                <td>
+
+                                    <a href="/usuario/detallar/{{ usuario.id }}" class="btn btn-sq-xs btn-primary">
+                                        <i class="fa fa-pencil fa-1x"></i>
+
+                                        <a href="/usuario/CambiarPassword/{{ usuario.id }}"
+                                           class="btn btn-sq-xs btn-primary">
+                                            <i class="fa fa-key fa-1x"></i>
+                                        </a>
+
+                                    </a>
+
+                                </td>
+                            </tr>
+
+                        {% endif %}
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+{% block content %}
+
+    <div class="container-fluid">
+        <ol class="breadcrumb" padding="6px">
+            <li><a href="/main">Principal</a></li>
+            <li><a href="/rol/todos">Roles</a></li>
+        </ol>
+        <div class="row">
+            <div class="col-lg-12">
+                <h1 class="page-header">Roles</h1>
+            </div>
+            <!-- /.col-lg-12 -->
+        </div>
+
+        <div class="panel-body">
+
+            <div class="dataTable_wrapper" style="width:70%" align="center">
+                <table class="table table-hover" id="listarRoles">
+                    <thead>
+                    <tr>
+                        <th>Rol</th>
+                        <th></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for rol in RolesList %}
+                        <tr>
+                            <td>{{ rol.name }}</td>
+                            <td>
+                                <a href="/rol/editar/{{ rol.id }}" class="btn btn-sq-xs btn-primary"><i
+                                        class="fa fa-pencil fa-1x"></i><br/></a>
+                                <a href="/rol/detalle/{{ rol.id }}" class="btn btn-sq-xs btn-primary"><i
+                                        class="fa fa-info fa-1x"></i><br/></a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+                <div style="text-align: center">
+                    <a href='/rol/new' class="btn btn-primary">Crear Rol</a>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

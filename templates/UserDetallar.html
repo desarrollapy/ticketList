@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+{% block content %}
+    <div class="container-fluid">
+        <ol class="breadcrumb" padding="6px">
+            <li><a href="/main">Principal</a></li>
+            {% if request.user.is_admin %}
+                <li><a href="/usuario/listar">Usuarios</a></li>{% endif %}
+            <li>{{ titulo }} Usuario</li>
+        </ol>
+        <div class="row">
+            <div class="col-lg-12">
+                <h1 class="page-header">{{ titulo }}</h1>
+            </div>
+            <!-- /.col-lg-12 -->
+        </div>
+
+        <div class="panel-body">
+            <div class="col-lg-7">
+
+                <!--Formulario para registrar/modificar un usuario.-->
+                <form role="form" action="{{ action }}" method="POST">
+                    {% csrf_token %}
+                    <div class="form-group">
+
+                        <!--Campo Email-->
+                        <label>Email</label>
+                        <input class="form-control" type="email" id="Email" name="Email"
+                               value="{{ Email }}" autofocus required>
+                        <p class="help-block">Será utilizado para acceder al sistema.</p>
+                    </div>
+
+                    <!--Campo Usuario-->
+                    <div class="form-group">
+                        <label>Usuario</label>
+                        <input class="form-control" type="text" id="Username" name="Usuario"
+                               value="{{ Usuario }}" required>
+                    </div>
+
+                    <!--Campo Nombre-->
+                    <div class="form-group">
+                        <label>Nombre</label>
+                        <input class="form-control" type="text" id="Nombre" name="Nombre"
+                               value="{{ Nombre }}" required>
+                    </div>
+
+                    <!--Campo Apellido-->
+                    <div class="form-group">
+                        <label>Apellido</label>
+                        <input class="form-control" type="text" id="Apellido" name="Apellido"
+                               value="{{ Apellido }}" required>
+                    </div>
+
+                    <!--Campo Administrador-->
+                    {% if request.user.is_admin %}
+                        <div class="form-group">
+                            <div class="checkbox">
+                                <label>
+                                    <input type="checkbox" name="Administrador"
+                                           {% if Administrador %}checked="True"{% endif %}>Administrador
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <div class="checkbox">
+                                <label>
+                                    <input type="checkbox" name="Estado"
+                                           {% if Estado %}checked="True"{% endif %}>Activo
+                                </label>
+                            </div>
+                        </div>
+                    {% endif %}
+
+                    <!--Botones Modificar y Cancelar-->
+                    <div style="text-align: center">
+                        <a type="button" href="/usuario/listar" class="btn btn-primary">Atrás</a>
+
+                        <button type="submit" href="/usuario/actualizar/{{ id }}" class="btn btn-primary">
+                            Modificar
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}

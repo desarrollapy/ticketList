@@ -23,7 +23,24 @@ from ticket import views
 urlpatterns = [
     # url(r'^admin/', admin.site.urls),
     url(r'^$', views.login_page, name='login'),
-    url(r'^inicio$', views.inicio, name='inicio')
+    url(r'^inicio$', views.inicio, name='inicio'),
+    # Navegacion para Roles.
+    url(r'^rol/add', views.RoleAgregar),
+    url(r'^rol/new', views.RoleNuevo, name="RolesNuevo"),
+    url(r'^rol/todos', views.RolesList, name="RolesList"),
+    url(r'^rol/editar/(?P<id>\d+)', views.RolesEditar, name="RolesEditar"),
+    url(r'^rol/update/(?P<id>\d+)', views.RolesUpdate),
+    url(r'^rol/detalle/(?P<id>\d+)', views.RolesDetalles, name="RolesEditar"),
+    url(r'^rol/asignarPermisos/(?P<id>\d+)', views.RolesAsignarPermisos, name="RolesAsignar"),
+    url(r'^rol/sacarPermiso/(?P<idGrupo>\d+)/(?P<idPermiso>\d+)', views.RolesSacarPermisos),
+    # Navegacion de usuarios.
+    url(r'^usuario/registrar', views.UserRegistrar, name="UsuarioRegistrar"),
+    url(r'^usuario/listar', views.UserListar, name="UsuarioListar"),
+    url(r'^usuario/detallar/(?P<id>\d+)', views.UserDetallar, name="UsuarioDetallar"),
+    url(r'^usuario/actualizar/(?P<id>\d+)', views.UserActualizar, name="UsuarioDetallar"),
+    url(r'^usuario/perfil', views.UserPerfil, name="UsuarioPerfil"),
+    url(r'^usuario/CambiarPassword/(?P<id>\d+)', views.UserCambiarPassword, name="UsuarioCambiarPassword"),
+
 ]
 
 
