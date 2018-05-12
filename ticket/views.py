@@ -36,7 +36,7 @@ def login_page(request):
         if user is not None:
             if user.is_active:
                 login(request, user)
-                return HttpResponseRedirect('/inicio')
+                return HttpResponseRedirect('/main')
             else:
                 messages.add_message(request, messages.WARNING, 'User inactivo.')
         else:
@@ -234,8 +234,8 @@ def RolesSacarPermisos(request, idPermiso, idGrupo):
 @login_required(login_url='/')
 def UserNuevo(request):
     currentUser = User.objects.get(id=request.user.id)
-    if (currentUser.is_superuser):
 
+    if (currentUser.is_superuser):
         form = RegistrarUserForm()
         context = {
             'form': form,
@@ -268,7 +268,7 @@ def UserRegistrar(request, *kwargs):
                 Apellido = form.cleaned_data['Apellido']
                 Administrador = form.cleaned_data['Administrador']
                 Estado = form.cleaned_data['Estado']
-
+                rol = Group.objects.get(id=request.POST['rol'])
             try:
 
                 validators.validate_password(Password)
@@ -276,8 +276,9 @@ def UserRegistrar(request, *kwargs):
                                                            first_name=Nombre,
                                                            last_name=Apellido,
                                                            is_superuser=Administrador, is_active=Estado)
-
+                UserNuevo.groups.add(rol);
                 UserNuevo.save()
+
                 messages.add_message(request, messages.SUCCESS, 'User registrado.')
                 return render(request, 'UserRegistrar.html')
 
@@ -307,7 +308,13 @@ def UserRegistrar(request, *kwargs):
                                      'Password inseguro, utilice al menos 8 caracteres alfanumericos.')
                 return render(request, 'UserRegistrar.html', context)
 
-        return render(request, 'UserRegistrar.html')
+        roles = Group.objects.all()
+
+        context = {
+            'roles': roles,
+            'action': '/usuario/registrar/'
+        }
+        return render(request, 'UserRegistrar.html', context)
     else:
         data = {
             'error': 'crear User'
@@ -346,16 +353,25 @@ def UserDetallar(request, id):
     currentUser = User.objects.get(id=request.user.id)
     if (currentUser.is_superuser):
         UserRegistrado = User.objects.get(id=id)
+        roles = Group.objects.all()
+        rolRegistrado = UserRegistrado.groups.all()
+        if(rolRegistrado.count() > 0 ):
+            rolRegistrado = rolRegistrado[0]
+        else :
+            rolRegistrado = {}
+        
         context = {'Email': UserRegistrado.email,
-                   'User': UserRegistrado.username,
+                   'Usuario': UserRegistrado.username,
                    'Password': UserRegistrado.password,
-                   'Nombre': UserRegistrado.nombre,
-                   'Apellido': UserRegistrado.apellido,
+                   'Nombre': UserRegistrado.first_name,
+                   'Apellido': UserRegistrado.last_name,
                    'Administrador': UserRegistrado.is_superuser,
                    'Estado': UserRegistrado.is_active,
                    'ID': UserRegistrado.id,
-                   'action': '/User/actualizar/' + id,
-                   'titulo': 'Modificar'
+                   'action': '/usuario/actualizar/' + id,
+                   'titulo': 'Modificar',
+                   'roles':roles,
+                   'rolRegistrado': rolRegistrado,
                    }
 
         return render(request, 'UserDetallar.html', context)
@@ -382,12 +398,14 @@ def UserActualizar(request, id):
             print form.errors
             if form.is_valid():
                 UserRegistrado.email = form.cleaned_data['Email'].lower()
-                UserRegistrado.username = form.cleaned_data['User'].lower()
+                UserRegistrado.username = form.cleaned_data['Usuario'].lower()
                 UserRegistrado.nombre = form.cleaned_data['Nombre']
                 UserRegistrado.apellido = form.cleaned_data['Apellido']
                 UserRegistrado.is_superuser = form.cleaned_data['Administrador']
                 UserRegistrado.is_active = form.cleaned_data['Estado']
-
+                UserRegistrado.groups.clear()
+                rol = Group.objects.get(id=request.POST['rol'])
+                UserRegistrado.groups.add(rol)
             try:
 
                 UserRegistrado.save()
@@ -400,8 +418,8 @@ def UserActualizar(request, id):
                            'Administrador': UserRegistrado.is_superuser,
                            'Estado': UserRegistrado.is_active,
                            }
-
-                return render(request, 'UserDetallar.html', context)
+                return HttpResponseRedirect('/usuario/detallar/' + id)
+                # return render(request, 'UserDetallar.html', context)
 
             except IntegrityError:
                 messages.add_message(request, messages.ERROR, 'User existente.')
@@ -413,8 +431,8 @@ def UserActualizar(request, id):
                    'Administrador': UserRegistrado.is_superuser,
                    'Estado': UserRegistrado.is_active,
                    }
-
-        return render(request, 'UserDetallar.html', context)
+        return HttpResponseRedirect('/usuario/detallar/' + id)
+        # return render(request, 'UserDetallar.html', context)
     else:
         data = {
             'error': 'modificar Users'

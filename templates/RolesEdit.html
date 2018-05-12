@@ -1,14 +1,17 @@
 {% extends 'base.html' %}
 {% block content %}
     <div class="container-fluid">
-        <ol class="breadcrumb" padding="6px">
-            <li><a href="/main">Principal</a></li>
-            <li><a href="/rol/todos">Roles</a></li>
-            <li>{{ titulo }}</li>
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="/main"><i class="fa fa-home" aria-hidden="true"></i></a></li>
+            {% if request.user.is_superuser %}
+                <li class="breadcrumb-item"><a href="/rol/todos">Roles</a></li>
+            {% endif %}
+            <li class="breadcrumb-item active">{{ titulo }}</li>
         </ol>
+
         <div class="row">
             <div class="col-lg-12">
-                <h1 class="page-header">{{ titulo }}</h1>
+                <h2 class="page-header">{{ titulo }}</h2>
             </div>
             <!-- /.col-lg-12 -->
         </div>

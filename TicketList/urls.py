@@ -23,7 +23,7 @@ from ticket import views
 urlpatterns = [
     # url(r'^admin/', admin.site.urls),
     url(r'^$', views.login_page, name='login'),
-    url(r'^inicio$', views.inicio, name='inicio'),
+    url(r'^main$', views.inicio, name='inicio'),
     # Navegacion para Roles.
     url(r'^rol/add', views.RoleAgregar),
     url(r'^rol/new', views.RoleNuevo, name="RolesNuevo"),

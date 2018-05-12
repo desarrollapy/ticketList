@@ -2,13 +2,15 @@
 {% block content %}
 
     <div class="container-fluid">
-        <ol class="breadcrumb" padding="6px">
-            <li><a href="/main">Principal</a></li>
-            <li><a href="/rol/todos">Roles</a></li>
-            <li>Detalle Rol</li>
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="/main"><i class="fa fa-home" aria-hidden="true"></i></a></li>
+            {% if request.user.is_superuser %}
+                <li class="breadcrumb-item"><a href="/rol/todos">Roles</a></li>
+            {% endif %}
+            <li class="breadcrumb-item active">Detalle Rol</li>
         </ol>
         <div class="col-lg-12">
-            <h1 class="page-header">Rol: {{ rol.name }}</h1>
+            <h2 class="page-header">Rol: {{ rol.name }}</h2>
         </div>
 
 

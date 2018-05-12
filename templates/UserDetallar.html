@@ -1,15 +1,17 @@
 {% extends "base.html" %}
 {% block content %}
     <div class="container-fluid">
-        <ol class="breadcrumb" padding="6px">
-            <li><a href="/main">Principal</a></li>
-            {% if request.user.is_admin %}
-                <li><a href="/usuario/listar">Usuarios</a></li>{% endif %}
-            <li>{{ titulo }} Usuario</li>
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="/main"><i class="fa fa-home" aria-hidden="true"></i></a></li>
+            {% if request.user.is_superuser %}
+                <li class="breadcrumb-item"><a href="/usuario/listar">Usuarios</a></li>
+            {% endif %}
+            <li class="breadcrumb-item active">{{ titulo }}</li>
         </ol>
+
         <div class="row">
             <div class="col-lg-12">
-                <h1 class="page-header">{{ titulo }}</h1>
+                <h2 class="page-header">{{ titulo }}</h2>
             </div>
             <!-- /.col-lg-12 -->
         </div>
@@ -32,7 +34,7 @@
                     <!--Campo Usuario-->
                     <div class="form-group">
                         <label>Usuario</label>
-                        <input class="form-control" type="text" id="Username" name="Usuario"
+                        <input class="form-control" type="text" id="Usuario" name="Usuario"
                                value="{{ Usuario }}" required>
                     </div>
 
@@ -48,6 +50,18 @@
                         <label>Apellido</label>
                         <input class="form-control" type="text" id="Apellido" name="Apellido"
                                value="{{ Apellido }}" required>
+                    </div>
+
+                    <!-- Campo rol -->
+                    <div class="form-group">
+                        <label>Rol</label>
+                        <select class="form-control" name="rol">
+                            <option value="">--Seleccione--</option>
+                            {% for rol in roles %}
+                                <option value="{{ rol.id }}"
+                                        {% if rol.id == rolRegistrado.id %} selected {% endif  %}>{{ rol.name }}</option>
+                            {% endfor %}
+                        </select>
                     </div>
 
                     <!--Campo Administrador-->
