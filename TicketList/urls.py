@@ -24,6 +24,7 @@ urlpatterns = [
     # url(r'^admin/', admin.site.urls),
     url(r'^$', views.login_page, name='login'),
     url(r'^main$', views.inicio, name='inicio'),
+    url(r'^logout$', views.logout_page, name="logout"),
     # Navegacion para Roles.
     url(r'^rol/add', views.RoleAgregar),
     url(r'^rol/new', views.RoleNuevo, name="RolesNuevo"),
@@ -40,6 +41,11 @@ urlpatterns = [
     url(r'^usuario/actualizar/(?P<id>\d+)', views.UserActualizar, name="UsuarioDetallar"),
     url(r'^usuario/perfil', views.UserPerfil, name="UsuarioPerfil"),
     url(r'^usuario/CambiarPassword/(?P<id>\d+)', views.UserCambiarPassword, name="UsuarioCambiarPassword"),
+
+    # Navegacion de Tickets.
+    url(r'^ticket/registrar', views.ticketAgregar, name="TicketRegistrar"),
+    url(r'^ticket/guardar', views.ticketGuardar, name="TicketGuardar"),
+    url(r'^ticket/pendientes', views.ticketPendientesList, name="TicketPendientes"),
 
 ]
 

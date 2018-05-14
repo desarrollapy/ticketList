@@ -1,8 +1,9 @@
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.auth.models import Group, User, Permission
 from django.core.exceptions import ValidationError
 from django.shortcuts import render
 from ticket.forms import *
+from ticket.models import *
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.hashers import check_password
@@ -13,6 +14,10 @@ import django.contrib.auth.password_validation as validators  # Para validar el 
 
 # Create your views here.
 
+@login_required(login_url='/')
+def logout_page(request):
+    logout(request)
+    return HttpResponseRedirect('/')
 
 @login_required(login_url='/')
 def inicio(request):
@@ -359,7 +364,7 @@ def UserDetallar(request, id):
             rolRegistrado = rolRegistrado[0]
         else :
             rolRegistrado = {}
-        
+
         context = {'Email': UserRegistrado.email,
                    'Usuario': UserRegistrado.username,
                    'Password': UserRegistrado.password,
@@ -498,7 +503,52 @@ def UserCambiarPassword(request, id):
                 return render(request, 'UserCambiarPassword.html')
 
         else:
-            messages.add_message(request, messages.SUCCESS, 'No coinciden los passwords.')
+            messages.add_message(request, messages.WARNING, 'No coinciden los passwords.')
 
     context = {'id': id}
     return render(request, 'UserCambiarPassword.html', context)
+
+@login_required(login_url='/')
+@permission_required('ticket.add_ticket')
+def ticketAgregar(request):
+    """
+        Vista para agregar un Ticket.
+    """
+    inconvenientes = Inconveniente.objects.all()
+    data = {
+        'inconvenientes': inconvenientes,
+        'titulo': 'Crear Ticket',
+        'action': '/ticket/guardar',
+    }
+
+    return render(request, 'TicketEdit.html', data)
+
+@login_required(login_url='/')
+def ticketGuardar(request):
+    """
+        Vista para guardar un ticket.
+    """
+    if request.method == 'POST':
+        usuario = User.objects.get(id=request.user.id)
+        descripcion = request.POST['descripcion']
+        shelter = request.POST['shelter']
+        inconveniente = Inconveniente.objects.get(id=request.POST['inconveniente'])
+        central = Central.objects.get(id=1)
+        ticket = Ticket(
+            descripcionBreve= descripcion,
+            shelter= shelter,
+            inconveniente = inconveniente,
+            central = central,
+            usuarioCreacion = usuario,
+            usuarioEncargado = usuario,
+            estado = 'PENDIENTE'
+        )
+        ticket.save()
+        messages.add_message(request, messages.SUCCESS, 'Ticket Creado')
+        return HttpResponseRedirect('/main')
+
+@login_required(login_url='/')
+def ticketPendientesList(request):
+    return render(request, "TicketList.html",{});
+
+

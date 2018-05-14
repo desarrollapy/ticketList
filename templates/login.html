@@ -17,7 +17,58 @@
   <link href="{% static 'css/sb-admin.css' %}" rel="stylesheet">
 </head>
 
-<body class="bg-dark">
+<body class="bg-dark" onload="funcionMensaje()">
+    <!-- Simply Toast -->
+<script>
+    function funcionMensaje() {
+
+        $.simplyToast.defaultOptions = {
+            appendTo: "body",
+            customClass: false,
+            type: "info",
+            offset: {
+                from: "top",
+                amount: 20
+            },
+            align: "right",
+            minWidth: 250,
+            maxWidth: 450,
+            delay: 4000,
+            allowDismiss: false,
+            spacing: 10
+        };
+
+        <!--Mensaje de Resultado-->
+        {% if messages %}
+            {% for message in messages %}
+
+                var mensaje = "{{ message }}"
+
+                {% if message.level == DEFAULT_MESSAGE_LEVELS.INFO %}
+
+                    $.simplyToast(mensaje, 'info');
+
+                {% elif message.level == DEFAULT_MESSAGE_LEVELS.SUCCESS %}
+
+                    $.simplyToast(mensaje, 'success');
+
+                {% elif message.level == DEFAULT_MESSAGE_LEVELS.WARNING %}
+
+                    $.simplyToast(mensaje, 'warning');
+
+                {% elif message.level == DEFAULT_MESSAGE_LEVELS.ERROR %}
+
+                    $.simplyToast(mensaje, 'danger');
+
+                {% endif %}
+
+            {% endfor %}
+
+        {% endif %}
+    }
+
+</script>
+
   <div class="container">
     <div class="card card-login mx-auto mt-5">
       <div class="card-header">Login</div>
@@ -43,5 +94,7 @@
   <script src="{% static 'vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
   <!-- Core plugin JavaScript-->
   <script src="{% static 'vendor/jquery-easing/jquery.easing.min.js' %}"></script>
+<!-- Simply Toast -->
+    <script src="{% static 'vendor/Toast/simply-toast.js' %}"></script>
 </body>
 </html>
