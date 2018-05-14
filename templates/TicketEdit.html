@@ -5,10 +5,8 @@
 
         <ol class="breadcrumb">
             <li class="breadcrumb-item"><a href="/main"><i class="fa fa-home" aria-hidden="true"></i></a></li>
-            {% if request.user.is_superuser %}
-                <li class="breadcrumb-item"><a href="/ticket/todos">Roles</a></li>
-            {% endif %}
-            <li class="breadcrumb-item active">{{ titulo }}</li>
+            <li class="breadcrumb-item"><a href="/ticket/todos">Tickets</a></li>
+            <li class="breadcrumb-item active">Agregar</li>
         </ol>
 
         <div class="row">

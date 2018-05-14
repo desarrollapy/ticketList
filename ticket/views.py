@@ -545,10 +545,103 @@ def ticketGuardar(request):
         )
         ticket.save()
         messages.add_message(request, messages.SUCCESS, 'Ticket Creado')
-        return HttpResponseRedirect('/main')
+        return HttpResponseRedirect('/ticket/mis-tickets')
 
 @login_required(login_url='/')
 def ticketPendientesList(request):
-    return render(request, "TicketList.html",{});
+    ticketList = Ticket.objects.all().filter(estado__exact='PENDIENTE')
+    return render(request, "TicketList.html",{
+        "ticketList":ticketList,
+        "titulo":"Tickets Pendientes"
+    });
+
+@login_required(login_url='/')
+def ticketAntendidosList(request):
+    ticketList = Ticket.objects.all().filter(estado__exact='ATENDIDO')
+    return render(request, "TicketList.html",{
+        "ticketList":ticketList,
+        "titulo":"Tickets Atendidos"
+    });
+
+@login_required(login_url='/')
+def ticketSolucionadosList(request):
+    ticketList = Ticket.objects.all().filter(estado__exact='SOLUCIONADO')
+    return render(request, "TicketList.html",{
+        "ticketList":ticketList,
+        "titulo":"Tickets Solucionados"
+    });
+
+@login_required(login_url='/')
+def ticketNoSolucionadosList(request):
+    ticketList = Ticket.objects.all().filter(estado__exact='NO_SOLUCIONADO')
+    return render(request, "TicketList.html",{
+        "ticketList":ticketList,
+        "titulo":"Tickets No Solucionados"
+    });
+
+@login_required(login_url='/')
+def ticketAtender(request, id):
+    usuario = User.objects.get(id=request.user.id);
+    ticket = Ticket.objects.get(id=id)
+    ticket.estado = 'ATENDIDO'
+    ticket.usuarioEncargado = usuario
+    ticket.save()
+    messages.add_message(request, messages.SUCCESS, 'Ticket marcado como atendido')
+    return HttpResponseRedirect('/ticket/pendientes')
+
+@login_required(login_url='/')
+def ticketSolucionado(request, id):
+    usuario = User.objects.get(id=request.user.id);
+    ticket = Ticket.objects.get(id=id)
+    if usuario.id == ticket.usuarioEncargado.id:
+        ticket.estado = 'SOLUCIONADO'
+        ticket.save()
+        messages.add_message(request, messages.SUCCESS, 'Ticket marcado como solucionado')
+        return HttpResponseRedirect('/ticket/atendidos')
+    else:
+        messages.add_message(request, messages.ERROR, 'No esta autorizado a solucionar ticket')
+        return HttpResponseRedirect('/ticket/atendidos')
 
 
+@login_required(login_url='/')
+def ticketNoSolucionadoEdit(request, id):
+    usuario = User.objects.get(id=request.user.id);
+    ticket = Ticket.objects.get(id=id)
+    if usuario.id == ticket.usuarioEncargado.id:
+        motivos = Motivo.objects.all();
+        action = "/ticket/no-solucionar/" + str(id)
+        context = {
+            "motivosList":motivos,
+            "action":action,
+        }
+        return render(request, 'TicketNoSolucionadoEdit.html', context)
+    else:
+        messages.add_message(request, messages.ERROR, 'No esta autorizado a solucionar ticket')
+        return HttpResponseRedirect('/ticket/atendidos')
+
+@login_required(login_url='/')
+def ticketNoSolucionar(request, id):
+    usuario = User.objects.get(id=request.user.id);
+    ticket = Ticket.objects.get(id=id)
+    if usuario.id == ticket.usuarioEncargado.id:
+        if request.method == 'POST':
+            motivo = Motivo.objects.get(id=request.POST['motivo'])
+            ticket.motivo = motivo
+            ticket.estado = "NO_SOLUCIONADO"
+            ticket.save()
+
+            messages.add_message(request, messages.SUCCESS, 'Ticket marcado como No solucionado')
+            return HttpResponseRedirect('/ticket/atendidos')
+
+    else:
+        messages.add_message(request, messages.ERROR, 'No esta autorizado a solucionar ticket')
+        return HttpResponseRedirect('/ticket/atendidos')
+
+@login_required(login_url='/')
+def ticketMisTickets(request):
+    usuario = User.objects.get(id=request.user.id)
+    ticketList = Ticket.objects.all().filter(usuarioCreacion=usuario)
+    return render(request, "TicketList.html",{
+        "ticketList":ticketList,
+        "titulo":"Mis Tickets"
+    });

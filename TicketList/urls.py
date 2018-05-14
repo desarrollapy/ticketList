@@ -45,7 +45,16 @@ urlpatterns = [
     # Navegacion de Tickets.
     url(r'^ticket/registrar', views.ticketAgregar, name="TicketRegistrar"),
     url(r'^ticket/guardar', views.ticketGuardar, name="TicketGuardar"),
+    url(r'^ticket/mis-tickets', views.ticketMisTickets, name="misTickets"),
     url(r'^ticket/pendientes', views.ticketPendientesList, name="TicketPendientes"),
+    url(r'^ticket/atendidos', views.ticketAntendidosList, name="TicketAtendidos"),
+    url(r'^ticket/solucionados', views.ticketSolucionadosList, name="TicketSolucionados"),
+    url(r'^ticket/no-solucionados', views.ticketNoSolucionadosList, name="TicketNoSolucionados"),
+    url(r'^ticket/atender/(?P<id>\d+)', views.ticketAtender, name="atenderTicket"),
+    url(r'^ticket/solucionar/(?P<id>\d+)', views.ticketSolucionado, name="solucionarTicket"),
+
+    url(r'^ticket/sin-solucion/(?P<id>\d+)', views.ticketNoSolucionadoEdit, name="sinSolucionTicket"),
+    url(r'^ticket/no-solucionar/(?P<id>\d+)', views.ticketNoSolucionar, name="noSolucionarTicket"),
 
 ]
 
