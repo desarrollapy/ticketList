@@ -8,8 +8,9 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.hashers import check_password
 from django.db import IntegrityError  # Para manejar errores de la Base de Datos.import
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, HttpResponse
 from django.contrib import messages  # Para enviar mensajes de erorr al template.
+from django.core import  serializers
 import django.contrib.auth.password_validation as validators  # Para validar el password.
 
 # Create your views here.
@@ -645,3 +646,10 @@ def ticketMisTickets(request):
         "ticketList":ticketList,
         "titulo":"Mis Tickets"
     });
+
+@login_required(login_url='/')
+def ticketPushActualizaciones(request):
+    pagina = request.GET.get('estado')
+    ticketList = Ticket.objects.all().filter(estado__exact='PENDIENTE')
+    data = serializers.serialize('json', ticketList)
+    return HttpResponse(data, content_type='application/json')

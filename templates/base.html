@@ -266,9 +266,12 @@
     <script src="{% static 'js/sb-admin.min.js' %}"></script>
     <!-- Custom scripts for this page-->
     <script src="{% static 'js/sb-admin-datatables.min.js' %}"></script>
-    <script src="{% static 'js/sb-admin-charts.min.js' %}"></script>
+
     <!-- Simply Toast -->
     <script src="{% static 'vendor/Toast/simply-toast.js' %}"></script>
+
+    {% block blockjs %}
+    {% endblock %}
 
 </div>
 </body>

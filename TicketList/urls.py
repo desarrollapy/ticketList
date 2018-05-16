@@ -56,6 +56,8 @@ urlpatterns = [
     url(r'^ticket/sin-solucion/(?P<id>\d+)', views.ticketNoSolucionadoEdit, name="sinSolucionTicket"),
     url(r'^ticket/no-solucionar/(?P<id>\d+)', views.ticketNoSolucionar, name="noSolucionarTicket"),
 
+    url(r'^ticket/actualizaciones-ajax/', views.ticketPushActualizaciones, name="TicketPush"),
+
 ]
 
 

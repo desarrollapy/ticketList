@@ -11,6 +11,10 @@
             <i class="fa fa-tasks"></i> {{ titulo }}
         </div>
         <div class="list-group list-group-flush small">
+
+            <p class="card-text text-center" id="pushticket" hidden>
+
+            </p>
             {% for ticket in ticketList %}
             <a class="list-group-item list-group-item-action" href="#">
                 <div class="media">
@@ -54,10 +58,61 @@
         </div>
         <div class="card-footer small text-muted">Updated yesterday at 11:59 PM</div>
     </div>
+{% endblock %}
+
+{% block blockjs %}
     <script>
         function goto(link) {
             console.log(link);
             window.location = link;
         }
+        function actualizarList(){
+            $.ajax({
+                data : {
+                    estado:'PENDIENTE',
+                },
+                url:'/ticket/actualizaciones-ajax/',
+                type:'get',
+                success: function (data) {
+                    var cont = 0;
+                    for(var i = 0; i<data.length ; i++){
+                        existe = false;
+                        {% for ticket in ticketList %}
+                            if(data[i].pk == {{ ticket.id }}){
+                                existe = true;
+                            }
+                        {% endfor %}
+                        if(!existe){
+                            cont++;
+                        }
+                    }
+
+                    {% for ticket in ticketList %}
+                        existe = false;
+                        for(var i = 0; i<data.length ; i++){
+                            if(data[i].pk == {{ ticket.id }}){
+                                existe = true;
+                            }
+                        }
+                        if(!existe) {
+                            cont++;
+                        }
+                    {% endfor %}
+
+                    if(cont != 0){
+                        pushtext = "<a href='/ticket/pendientes'>Ver " + cont + " nuevas actualizaciones</a>";
+                        $('#pushticket').html(pushtext);
+                        $('#pushticket').removeAttr('hidden');
+                    }
+                }
+            });
+
+        }
+        function readyFn() {
+            setInterval('actualizarList()',60000)
+            // console.log( "ready!" );
+        }
+        $(window).on( "load", readyFn );
+        // jQuery(document).ready( readyFn );
     </script>
 {% endblock %}
