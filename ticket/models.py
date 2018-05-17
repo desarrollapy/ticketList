@@ -35,4 +35,5 @@ class Ticket(models.Model):
     class Meta:
         permissions = (
             ('change_state_ticket', 'Puede cambiar estado del ticket'),
+            ('view_ticket', 'Puede listar los ticket'),
         )

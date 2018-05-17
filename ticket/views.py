@@ -22,6 +22,11 @@ def logout_page(request):
 
 @login_required(login_url='/')
 def inicio(request):
+    currentUser = User.objects.get(id=request.user.id)
+    # rol = Group.objects.get(currentUser.groups.all()[0].id);
+    for obj in currentUser.groups.all():
+        if(obj.id == 1):
+            return HttpResponseRedirect('/ticket/mis-tickets')
     return render(request, "dashboard.html",{});
 
 
@@ -510,7 +515,7 @@ def UserCambiarPassword(request, id):
     return render(request, 'UserCambiarPassword.html', context)
 
 @login_required(login_url='/')
-@permission_required('ticket.add_ticket')
+@permission_required('ticket.add_ticket', raise_exception=True)
 def ticketAgregar(request):
     """
         Vista para agregar un Ticket.
@@ -525,6 +530,7 @@ def ticketAgregar(request):
     return render(request, 'TicketEdit.html', data)
 
 @login_required(login_url='/')
+@permission_required('ticket.add_ticket', raise_exception=True)
 def ticketGuardar(request):
     """
         Vista para guardar un ticket.
@@ -549,6 +555,7 @@ def ticketGuardar(request):
         return HttpResponseRedirect('/ticket/mis-tickets')
 
 @login_required(login_url='/')
+@permission_required('ticket.view_ticket', raise_exception=True)
 def ticketPendientesList(request):
     ticketList = Ticket.objects.all().filter(estado__exact='PENDIENTE')
     return render(request, "TicketList.html",{
@@ -557,6 +564,7 @@ def ticketPendientesList(request):
     });
 
 @login_required(login_url='/')
+@permission_required('ticket.view_ticket', raise_exception=True)
 def ticketAntendidosList(request):
     ticketList = Ticket.objects.all().filter(estado__exact='ATENDIDO')
     return render(request, "TicketList.html",{
@@ -565,6 +573,7 @@ def ticketAntendidosList(request):
     });
 
 @login_required(login_url='/')
+@permission_required('ticket.view_ticket', raise_exception=True)
 def ticketSolucionadosList(request):
     ticketList = Ticket.objects.all().filter(estado__exact='SOLUCIONADO')
     return render(request, "TicketList.html",{
@@ -573,6 +582,7 @@ def ticketSolucionadosList(request):
     });
 
 @login_required(login_url='/')
+@permission_required('ticket.view_ticket', raise_exception=True)
 def ticketNoSolucionadosList(request):
     ticketList = Ticket.objects.all().filter(estado__exact='NO_SOLUCIONADO')
     return render(request, "TicketList.html",{
@@ -581,6 +591,7 @@ def ticketNoSolucionadosList(request):
     });
 
 @login_required(login_url='/')
+@permission_required('ticket.change_state_ticket', raise_exception=True)
 def ticketAtender(request, id):
     usuario = User.objects.get(id=request.user.id);
     ticket = Ticket.objects.get(id=id)
@@ -591,6 +602,7 @@ def ticketAtender(request, id):
     return HttpResponseRedirect('/ticket/pendientes')
 
 @login_required(login_url='/')
+@permission_required('ticket.change_state_ticket', raise_exception=True)
 def ticketSolucionado(request, id):
     usuario = User.objects.get(id=request.user.id);
     ticket = Ticket.objects.get(id=id)
@@ -605,6 +617,7 @@ def ticketSolucionado(request, id):
 
 
 @login_required(login_url='/')
+@permission_required('ticket.change_state_ticket', raise_exception=True)
 def ticketNoSolucionadoEdit(request, id):
     usuario = User.objects.get(id=request.user.id);
     ticket = Ticket.objects.get(id=id)
@@ -621,6 +634,7 @@ def ticketNoSolucionadoEdit(request, id):
         return HttpResponseRedirect('/ticket/atendidos')
 
 @login_required(login_url='/')
+@permission_required('ticket.change_state_ticket', raise_exception=True)
 def ticketNoSolucionar(request, id):
     usuario = User.objects.get(id=request.user.id);
     ticket = Ticket.objects.get(id=id)
@@ -649,7 +663,8 @@ def ticketMisTickets(request):
 
 @login_required(login_url='/')
 def ticketPushActualizaciones(request):
+    usuario = User.objects.get(id=request.user.id)
     pagina = request.GET.get('estado')
-    ticketList = Ticket.objects.all().filter(estado__exact='PENDIENTE')
+    ticketList = Ticket.objects.all().filter(estado__exact=pagina, usuarioCreacion=usuario)
     data = serializers.serialize('json', ticketList)
     return HttpResponse(data, content_type='application/json')

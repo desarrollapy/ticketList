@@ -29,6 +29,7 @@
                         <br />
                         <p>{{ ticket.descripcionBreve }}</p>
                         <div class="pull-right">
+                            {% if perms.ticket.change_state_ticket %}
                             <div class="btn-group btn-group-sm" role="group" aria-label="Basic example">
                                 {% if ticket.estado == 'PENDIENTE' %}
                                 <button type="button" class="btn btn-light"
@@ -50,13 +51,14 @@
                                 </button>
                                 {% endif %}
                             </div>
+                            {% endif %}
                         </div>
                     </div>
                 </div>
             </a>
             {% endfor %}
         </div>
-        <div class="card-footer small text-muted">Updated yesterday at 11:59 PM</div>
+        <div class="card-footer small text-muted"></div>
     </div>
 {% endblock %}
 

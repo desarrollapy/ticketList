@@ -20,6 +20,7 @@
 </head>
 
 <body class="fixed-nav sticky-footer bg-dark" id="page-top" onload="funcionMensaje()">
+
 <!-- Simply Toast -->
 <script>
     function funcionMensaje() {
@@ -74,15 +75,15 @@
 
 <!-- Navigation-->
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top" id="mainNav">
-    <a class="navbar-brand" href="index.html">TicketList</a>
+    <a class="navbar-brand" href="/main">TicketList</a>
     <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
     </button>
     <div class="collapse navbar-collapse" id="navbarResponsive">
         <ul class="navbar-nav navbar-sidenav" id="exampleAccordion">
 
-
-            <li class="nav-item" data-toggle="tooltip" data-placement="right" title="Menu Levels">
+            {% if user.is_superuser %}
+            <li class="nav-item" data-toggle="tooltip" data-placement="right" title="Administración">
                 <a class="nav-link nav-link-collapse collapsed" data-toggle="collapse" href="#collapseMulti" data-parent="#exampleAccordion">
                     <i class="fa fa-fw fa-gear"></i>
                     <span class="nav-link-text">Administracion</span>
@@ -96,14 +97,15 @@
                     </li>
                 </ul>
             </li>
-            <li class="nav-item" data-toggle="tooltip" data-placement="right" title="Dashboard">
+            <li class="nav-item" data-toggle="tooltip" data-placement="right" title="Centrales">
                 <a class="nav-link" href="index.html">
                     <i class="fa fa-fw fa-dashboard"></i>
                     <span class="nav-link-text">Centrales</span>
                 </a>
             </li>
+            {% endif %}
 
-            <li class="nav-item" data-toggle="tooltip" data-placement="right" title="Menu Levels">
+            <li class="nav-item" data-toggle="tooltip" data-placement="right" title="Tickets">
                 <a class="nav-link nav-link-collapse collapsed" data-toggle="collapse" href="#collapseTicket" data-parent="#exampleAccordion">
                     <i class="fa fa-fw fa-tasks"></i>
                     <span class="nav-link-text">Tickets</span>
@@ -112,6 +114,7 @@
                     <li>
                         <a href="/ticket/mis-tickets">Mis tickets</a>
                     </li>
+                    {% if perms.ticket.change_state_ticket %}
                     <li>
                         <a href="/ticket/pendientes">Pendientes</a>
                     </li>
@@ -124,14 +127,17 @@
                     <li>
                         <a href="/ticket/no-solucionados">No Solucionados</a>
                     </li>
+                    {% endif %}
                 </ul>
             </li>
-            <li class="nav-item" data-toggle="tooltip" data-placement="right" title="Tables">
+            {% if perms.ticket.add_ticket %}
+            <li class="nav-item" data-toggle="tooltip" data-placement="right" title="Nuevo Ticket">
                 <a class="nav-link" href="/ticket/registrar">
                     <i class="fa fa-fw fa-wrench"></i>
                     <span class="nav-link-text">Nuevo Ticket</span>
                 </a>
             </li>
+            {% endif %}
             <!-- <li class="nav-item" data-toggle="tooltip" data-placement="right" title="Components">
               <a class="nav-link nav-link-collapse collapsed" data-toggle="collapse" href="#collapseComponents" data-parent="#exampleAccordion">
                 <i class="fa fa-fw fa-wrench"></i>
@@ -227,7 +233,7 @@
     <footer class="sticky-footer">
         <div class="container">
             <div class="text-center">
-                <small>Copyright © Your Website 2018</small>
+                <small>TicketList - 2018</small>
             </div>
         </div>
     </footer>
