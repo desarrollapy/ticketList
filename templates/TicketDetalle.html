@@ -48,7 +48,8 @@
                     <a href='/ticket/editar/{{ ticket.id }}' class="btn btn-primary btn-sm">
                         <i class="fa fa-pencil" aria-hidden="true"></i> Editar
                     </a>
-                    <a href='/ticket/eliminar/{{ ticket.id }}' class="btn btn-primary btn-sm">
+                    <a href='/ticket/eliminar/{{ ticket.id }}' class="btn btn-primary btn-sm"
+                       onclick="return confirm('Estas Seguro de Eliminar registro?')">
                         <i class="fa fa-trash-o" aria-hidden="true"></i> Eliminar
                     </a>
                 </div>

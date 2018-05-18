@@ -587,6 +587,22 @@ def ticketActualizar(request, id):
         return HttpResponseRedirect('/ticket/detalle/' + id)
 
 @login_required(login_url='/')
+@permission_required('ticket.delete_ticket', raise_exception=True)
+def ticketEliminar(request, id):
+    """
+        Vista para guardar un ticket.
+    """
+
+    ticket = Ticket.objects.get(id=id)
+    comentarios = Comentarios.objects.filter(ticket = ticket)
+    for comt in comentarios :
+        comt.delete()
+    ticket.delete()
+    messages.add_message(request, messages.SUCCESS, 'Ticket Borrado!')
+    return HttpResponseRedirect('/ticket/mis-tickets')
+
+
+@login_required(login_url='/')
 @permission_required('ticket.view_ticket', raise_exception=True)
 def TicketDetallar(request, id):
     """

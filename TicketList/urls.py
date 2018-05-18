@@ -48,6 +48,7 @@ urlpatterns = [
     url(r'^ticket/detalle/(?P<id>\d+)', views.TicketDetallar, name="TicketDetalle"),
     url(r'^ticket/editar/(?P<id>\d+)', views.ticketEditar, name="TicketEditar"),
     url(r'^ticket/actualizar/(?P<id>\d+)', views.ticketActualizar, name="TicketActualizar"),
+    url(r'^ticket/eliminar/(?P<id>\d+)', views.ticketEliminar, name="TicketEliminar"),
 
     url(r'^ticket/mis-tickets', views.ticketMisTickets, name="misTickets"),
     url(r'^ticket/pendientes', views.ticketPendientesList, name="TicketPendientes"),
