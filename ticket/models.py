@@ -37,3 +37,20 @@ class Ticket(models.Model):
             ('change_state_ticket', 'Puede cambiar estado del ticket'),
             ('view_ticket', 'Puede listar los ticket'),
         )
+
+class Comentarios(models.Model):
+    """
+        Se encarga de manejar los comentarios de un user story.
+        :param autor: Foreign Key Usuario
+        :param titulo: Char Field
+        :param comentario: Text Field
+        :param fechaComentario: DateTime Field
+        :param userStory: Foreign Key userStory
+        :param lado: Integer Field
+    """
+
+    autor = models.ForeignKey(User)
+    comentario = models.TextField()
+    fechaComentario = models.DateTimeField(auto_now_add=True)
+    ticket = models.ForeignKey(Ticket, null=True)
+    lado = models.IntegerField()

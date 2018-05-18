@@ -1,0 +1,84 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container-fluid">
+
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="/main"><i class="fa fa-home" aria-hidden="true"></i></a></li>
+            <li class="breadcrumb-item"><a href="/ticket/todos">Tickets</a></li>
+            <li class="breadcrumb-item active">Detalle</li>
+        </ol>
+    <div class="row">
+
+        <!-- Post Content Column -->
+        <div class="col-lg-8">
+
+          <!-- Title -->
+          <h1 class="mt-4">{{ ticket.inconveniente.descripcion }}</h1>
+
+          <!-- Author -->
+          <p class="lead">
+            Creado por
+            <a href="#">{{ ticket.usuarioCreacion }}</a> &bull; {{ ticket.fechaCreacion | date:'d-m-Y H:i'}}
+          </p>
+
+          <hr>
+            <!-- Post Content -->
+          <p class="lead">
+              {{ ticket.descripcionBreve }}
+          </p>
+            Marcado como
+            {% if ticket.estado == 'PENDIENTE' %}
+                <span class="badge badge-secondary">{{ ticket.estado }}</span>
+            {% endif %}
+            {% if ticket.estado == 'ATENDIDO' %}
+                <span class="badge badge-warning">{{ ticket.estado }}</span>
+            {% endif %}
+            {% if ticket.estado == 'SOLUCIONADO' %}
+                <span class="badge badge-success">{{ ticket.estado }}</span>
+            {% endif %}
+            {% if ticket.estado == 'NO_SOLUCIONADO' %}
+                <span class="badge badge-danger">NO SOLUCIONADO</span>
+            {% endif %}
+
+            por {{ ticket.usuarioEncargado }}
+
+          <hr>
+            {% if ticket.estado == 'PENDIENTE' %}
+                <div style="text-align: center">
+                    <a href='/ticket/editar/{{ ticket.id }}' class="btn btn-primary btn-sm">
+                        <i class="fa fa-pencil" aria-hidden="true"></i> Editar
+                    </a>
+                    <a href='/ticket/eliminar/{{ ticket.id }}' class="btn btn-primary btn-sm">
+                        <i class="fa fa-trash-o" aria-hidden="true"></i> Eliminar
+                    </a>
+                </div>
+            {% endif %}
+
+          <!-- Comments Form -->
+          <div class="card my-4" style="background-color: #f5f8fa">
+            <div class="card-body">
+              <form role="form" action="{{ actionComentar}}" method="post">{% csrf_token %}
+                <div class="form-group">
+                  <textarea class="form-control" rows="3" name="comentario"></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary">Comentar</button>
+              </form>
+            </div>
+          </div>
+
+          {% for coment in comentarios %}<!-- Single Comment -->
+          <div class="media mb-4">
+            <div class="media-body">
+                <small style="color: #828e95"><strong>
+                            {{ coment.autor }}
+                        </strong> &bull; {{ coment.fechaComentario | date:'d-m-Y H:i'}}</small>
+                <br />
+              {{ coment.comentario }}
+            </div>
+          </div>
+        {% endfor %}
+
+        </div>
+</div>
+</div>
+{% endblock %}

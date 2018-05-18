@@ -45,6 +45,10 @@ urlpatterns = [
     # Navegacion de Tickets.
     url(r'^ticket/registrar', views.ticketAgregar, name="TicketRegistrar"),
     url(r'^ticket/guardar', views.ticketGuardar, name="TicketGuardar"),
+    url(r'^ticket/detalle/(?P<id>\d+)', views.TicketDetallar, name="TicketDetalle"),
+    url(r'^ticket/editar/(?P<id>\d+)', views.ticketEditar, name="TicketEditar"),
+    url(r'^ticket/actualizar/(?P<id>\d+)', views.ticketActualizar, name="TicketActualizar"),
+
     url(r'^ticket/mis-tickets', views.ticketMisTickets, name="misTickets"),
     url(r'^ticket/pendientes', views.ticketPendientesList, name="TicketPendientes"),
     url(r'^ticket/atendidos', views.ticketAntendidosList, name="TicketAtendidos"),
@@ -52,6 +56,8 @@ urlpatterns = [
     url(r'^ticket/no-solucionados', views.ticketNoSolucionadosList, name="TicketNoSolucionados"),
     url(r'^ticket/atender/(?P<id>\d+)', views.ticketAtender, name="atenderTicket"),
     url(r'^ticket/solucionar/(?P<id>\d+)', views.ticketSolucionado, name="solucionarTicket"),
+
+    url(r'^ticket/comentario/agregar/(?P<id>\d+)', views.ticketGuardarComentario, name="TicketGuardarComentario"),
 
     url(r'^ticket/sin-solucion/(?P<id>\d+)', views.ticketNoSolucionadoEdit, name="sinSolucionTicket"),
     url(r'^ticket/no-solucionar/(?P<id>\d+)', views.ticketNoSolucionar, name="noSolucionarTicket"),

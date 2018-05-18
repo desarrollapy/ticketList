@@ -31,7 +31,9 @@
                         <select class="form-control" type="text" id="inconveniente" name="inconveniente">
                             <option value="">--Seleccione--</option>
                             {% for inc in inconvenientes %}
-                                <option value="{{ inc.id }}">{{ inc.descripcion }} </option>
+                                <option value="{{ inc.id }}"
+                                        {% if inc.id == ticket.inconveniente.id %} selected {% endif %}>
+                                    {{ inc.descripcion }} </option>
                             {% endfor %}
                         </select>
                     </div>
@@ -39,7 +41,7 @@
                         <label for="desCorta">Descripción Breve </label>
                         <input class="form-control" id="descripcion"
                                placeholder="Descripcion del inconveniente" name="descripcion"
-                               value="{{ ticket.descripcion}}" required>
+                               value="{{ ticket.descripcionBreve }}" required>
                     </div>
                     <div style="text-align: center">
                         <input type=submit value="Guardar" class="btn btn-primary">

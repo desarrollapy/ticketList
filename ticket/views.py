@@ -40,9 +40,6 @@ def login_page(request):
         username = request.POST.get('usuario')
         password = request.POST.get('password')
 
-        print(username)
-        print(password)
-
         user = authenticate(username=username, password=password)
         if user is not None:
             if user.is_active:
@@ -531,6 +528,24 @@ def ticketAgregar(request):
 
 @login_required(login_url='/')
 @permission_required('ticket.add_ticket', raise_exception=True)
+def ticketEditar(request, id):
+    """
+        Vista para agregar un Ticket.
+    """
+    ticket = Ticket.objects.get(id=id)
+    inconvenientes = Inconveniente.objects.all()
+    data = {
+        'ticket':ticket,
+        'inconvenientes': inconvenientes,
+        'titulo': 'Modificar Ticket',
+        'action': '/ticket/actualizar/' + id,
+    }
+
+    return render(request, 'TicketEdit.html', data)
+
+
+@login_required(login_url='/')
+@permission_required('ticket.add_ticket', raise_exception=True)
 def ticketGuardar(request):
     """
         Vista para guardar un ticket.
@@ -553,6 +568,59 @@ def ticketGuardar(request):
         ticket.save()
         messages.add_message(request, messages.SUCCESS, 'Ticket Creado')
         return HttpResponseRedirect('/ticket/mis-tickets')
+
+@login_required(login_url='/')
+@permission_required('ticket.add_ticket', raise_exception=True)
+def ticketActualizar(request, id):
+    """
+        Vista para guardar un ticket.
+    """
+    if request.method == 'POST':
+        ticket = Ticket.objects.get(id=id)
+        ticket.descripcionBreve = request.POST['descripcion']
+        ticket.shelter = request.POST['shelter']
+        inconveniente = Inconveniente.objects.get(id=request.POST['inconveniente'])
+        ticket.inconveniente = inconveniente
+        central = Central.objects.get(id=1)
+        ticket.save()
+        messages.add_message(request, messages.SUCCESS, 'Ticket Actualizado')
+        return HttpResponseRedirect('/ticket/detalle/' + id)
+
+@login_required(login_url='/')
+@permission_required('ticket.view_ticket', raise_exception=True)
+def TicketDetallar(request, id):
+    """
+        Vista para detallar un User registrado.
+
+    """
+    ticket = Ticket.objects.get(id=id)
+    comentarios = Comentarios.objects.filter(ticket = ticket)
+    context = {
+        'ticket': ticket,
+        'comentarios': comentarios,
+        'actionComentar': '/ticket/comentario/agregar/' + id
+    }
+    return render(request, 'TicketDetalle.html', context)
+
+@login_required(login_url='/')
+@permission_required('ticket.add_ticket', raise_exception=True)
+def ticketGuardarComentario(request, id):
+    """
+        Vista para guardar un ticket.
+    """
+    if request.method == 'POST':
+        usuario = User.objects.get(id=request.user.id)
+        comentario = request.POST['comentario']
+        ticket = Ticket.objects.get(id=id)
+        comentario = Comentarios(
+            comentario= comentario,
+            autor= usuario,
+            ticket = ticket,
+            lado = 1
+        )
+        comentario.save()
+        messages.add_message(request, messages.SUCCESS, 'Comentario agregado')
+        return HttpResponseRedirect('/ticket/detalle/' + id)
 
 @login_required(login_url='/')
 @permission_required('ticket.view_ticket', raise_exception=True)
