@@ -23,11 +23,14 @@ def logout_page(request):
 @login_required(login_url='/')
 def inicio(request):
     currentUser = User.objects.get(id=request.user.id)
-    # rol = Group.objects.get(currentUser.groups.all()[0].id);
-    for obj in currentUser.groups.all():
-        if(obj.id == 1):
-            return HttpResponseRedirect('/ticket/mis-tickets')
-    return render(request, "dashboard.html",{});
+    persona = Persona.objects.filter(usuario=currentUser)
+    if(persona.first().first_login == True):
+        for obj in currentUser.groups.all():
+            if(obj.id == 1):
+                return HttpResponseRedirect('/ticket/mis-tickets')
+        return render(request, "dashboard.html",{});
+    else:
+        return HttpResponseRedirect('/usuario/primer-login')
 
 
 def login_page(request):
@@ -52,6 +55,29 @@ def login_page(request):
 
     return render(request, 'login.html')
 
+@login_required(login_url='/')
+def primerLogin(request):
+    currentUser = User.objects.get(id=request.user.id)
+    if request.method == "POST":
+        passwordnuevo = request.POST.get('passwordnuevo')
+        againpassword = request.POST.get('againpassword')
+        if passwordnuevo == againpassword:
+            validators.validate_password(passwordnuevo)
+            currentUser.set_password(passwordnuevo)
+            currentUser.save()
+
+            persona = Persona.objects.filter(usuario=currentUser).first()
+            persona.first_login = True;
+            persona.save()
+            messages.add_message(request, messages.SUCCESS, 'Password modificado.')
+            user = authenticate(username=currentUser.username, password=passwordnuevo)
+            if user is not None:
+                if user.is_active:
+                    login(request, user)
+                    return HttpResponseRedirect('/main')
+        else:
+            messages.add_message(request, messages.ERROR, 'Las contrase;as no coinciden')
+    return render(request, 'changePassword.html', {"action":"/usuario/primer-login"})
 
 # CRUD: Roles
 @login_required(login_url='/')
@@ -272,32 +298,58 @@ def UserRegistrar(request, *kwargs):
                 Email = form.cleaned_data['Email'].lower()
                 Username = form.cleaned_data['Usuario']
                 Password = form.cleaned_data['Password']
+                againPassword = form.cleaned_data['againPassword']
+                codigo = form.cleaned_data['codigo']
                 Nombre = form.cleaned_data['Nombre']
                 Apellido = form.cleaned_data['Apellido']
                 Administrador = form.cleaned_data['Administrador']
                 Estado = form.cleaned_data['Estado']
                 rol = Group.objects.get(id=request.POST['rol'])
             try:
+                if(Password == againPassword):
+                    validators.validate_password(Password)
+                    UserNuevo = User.objects.create_user(email=Email, username=Username, password=Password,
+                                                         first_name=Nombre,
+                                                         last_name=Apellido,
+                                                         is_superuser=Administrador,
+                                                         is_active=Estado,
+                                                         is_staff=True)
+                    UserNuevo.groups.add(rol);
+                    UserNuevo.save()
+                    persona = Persona(first_login=False, codigo = codigo, usuario=UserNuevo)
+                    persona.save()
 
-                validators.validate_password(Password)
-                UserNuevo = User.objects.create_user(email=Email, username=Username, password=Password,
-                                                           first_name=Nombre,
-                                                           last_name=Apellido,
-                                                           is_superuser=Administrador, is_active=Estado)
-                UserNuevo.groups.add(rol);
-                UserNuevo.save()
+                    messages.add_message(request, messages.SUCCESS, 'User registrado.')
+                    return render(request, 'UserRegistrar.html')
+                else:
+                    UserNuevo = User(email=Email, username=Username, password=Password,
+                                     first_name=Nombre,
+                                     last_name=Apellido,
+                                     is_superuser=Administrador, is_active=Estado)
+                    roles = Group.objects.all()
 
-                messages.add_message(request, messages.SUCCESS, 'User registrado.')
-                return render(request, 'UserRegistrar.html')
+                    context = {
+                        'usuario': UserNuevo,
+                        'roles': roles,
+                        'action': '/usuario/registrar/'
+                    }
+
+                    messages.add_message(request, messages.ERROR, 'Las contrase&ntilde;as no coinciden.')
+                    return render(request, 'UserRegistrar.html', context)
+
 
             except IntegrityError:
 
                 UserNuevo = User(email=Email, username=Username, password=Password,
-                                       nombre=Nombre,
-                                       apellido=Apellido,
+                                 first_name=Nombre,
+                                 last_name=Apellido,
                                        is_superuser=Administrador, is_active=Estado)
+                roles = Group.objects.all()
+
                 context = {
-                    'User': UserNuevo,
+                    'usuario': UserNuevo,
+                    'roles': roles,
+                    'action': '/usuario/registrar/'
                 }
 
                 messages.add_message(request, messages.ERROR, 'User existente.')
@@ -305,11 +357,15 @@ def UserRegistrar(request, *kwargs):
 
             except ValidationError:
                 UserNuevo = User(email=Email, username=Username, password=Password,
-                                       nombre=Nombre,
-                                       apellido=Apellido,
+                                 first_name=Nombre,
+                                 last_name=Apellido,
                                        is_superuser=Administrador, is_active=Estado)
+                roles = Group.objects.all()
+
                 context = {
-                    'User': UserNuevo,
+                    'usuario': UserNuevo,
+                    'roles': roles,
+                    'action': '/usuario/registrar/'
                 }
 
                 messages.add_message(request, messages.ERROR,
@@ -644,7 +700,8 @@ def ticketPendientesList(request):
     ticketList = Ticket.objects.all().filter(estado__exact='PENDIENTE')
     return render(request, "TicketList.html",{
         "ticketList":ticketList,
-        "titulo":"Tickets Pendientes"
+        "titulo":"Tickets Pendientes",
+        "pagina":"PENDIENTE"
     });
 
 @login_required(login_url='/')
@@ -653,7 +710,8 @@ def ticketAntendidosList(request):
     ticketList = Ticket.objects.all().filter(estado__exact='ATENDIDO')
     return render(request, "TicketList.html",{
         "ticketList":ticketList,
-        "titulo":"Tickets Atendidos"
+        "titulo":"Tickets Atendidos",
+        "pagina": "ATENDIDO"
     });
 
 @login_required(login_url='/')
@@ -662,7 +720,8 @@ def ticketSolucionadosList(request):
     ticketList = Ticket.objects.all().filter(estado__exact='SOLUCIONADO')
     return render(request, "TicketList.html",{
         "ticketList":ticketList,
-        "titulo":"Tickets Solucionados"
+        "titulo":"Tickets Solucionados",
+        "pagina": "SOLUCIONADO"
     });
 
 @login_required(login_url='/')
@@ -671,7 +730,8 @@ def ticketNoSolucionadosList(request):
     ticketList = Ticket.objects.all().filter(estado__exact='NO_SOLUCIONADO')
     return render(request, "TicketList.html",{
         "ticketList":ticketList,
-        "titulo":"Tickets No Solucionados"
+        "titulo":"Tickets No Solucionados",
+        "pagina": "NO_SOLUCIONADO"
     });
 
 @login_required(login_url='/')
@@ -742,13 +802,15 @@ def ticketMisTickets(request):
     ticketList = Ticket.objects.all().filter(usuarioCreacion=usuario)
     return render(request, "TicketList.html",{
         "ticketList":ticketList,
-        "titulo":"Mis Tickets"
+        "titulo":"Mis Tickets",
+        "pagina":"MISTICKETS"
     });
 
 @login_required(login_url='/')
 def ticketPushActualizaciones(request):
     usuario = User.objects.get(id=request.user.id)
     pagina = request.GET.get('estado')
-    ticketList = Ticket.objects.all().filter(estado__exact=pagina, usuarioCreacion=usuario)
+    print(pagina)
+    ticketList = Ticket.objects.all().filter(estado__exact=pagina)
     data = serializers.serialize('json', ticketList)
     return HttpResponse(data, content_type='application/json')

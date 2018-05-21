@@ -19,53 +19,77 @@
         </div>
 
         <div class="panel-body">
-            <div class="col-lg-7">
+            <div class="col-lg-12">
                 <div class="row">
-
                     <!--Formulario para registrar/modificar un usuario.-->
                     <form role="form" action="{{ action }}" method="POST">
                         {% csrf_token %}
                         <div class="form-group">
+                            <div class="form-row">
+                                <div class="col-md-6">
+                                    <!--Campo Usuario-->
+                                    <label>Usuario</label>
+                                    <input class="form-control" type="text" id="Username" placeholder="ejemplo"
+                                       name="Usuario"
+                                       value="{{ usuario.username }}" required>
 
-                            <!--Campo Email-->
-                            <label>Email</label>
-                            <input class="form-control" type="email" id="Email" placeholder="ejemplo@mail.com"
-                                   name="Email"
-                                   value="{{ usuario.email }}" autofocus required>
-                            <p class="help-block">Será utilizado para acceder al sistema.</p>
-                        </div>
-
-                        <!--Campo Usuario-->
-                        <div class="form-group">
-                            <label>Usuario</label>
-                            <input class="form-control" type="text" id="Username" placeholder="ejemplo"
-                                   name="Usuario"
-                                   value="{{ usuario.username }}" required>
+                                </div>
+                                <div class="col-md-6">
+                                    <!--Campo Email-->
+                                    <label>Email</label>
+                                    <input class="form-control" type="email" id="Email" placeholder="ejemplo@mail.com"
+                                           name="Email"
+                                           value="{{ usuario.email }}" autofocus required>
+                                </div>
+                                <small style="color: #80898f">Será utilizado para acceder al sistema.</small>
+                            </div>
                         </div>
 
                         <!--Campo Password-->
                         <div class="form-group">
-                            <label>Contraseña</label>
-                            <input class="form-control" type="password" id="Password" placeholder="*****"
-                                   name="Password"
-                                   value="{{ usuario.password }}" required>
-                            <p class="help-block">Utilice al menos 8 caracteres alfanuméricos.</p>
+                            <div class="form-row">
+                                <div class="col-md-6">
+                                    <label>Contraseña</label>
+                                    <input class="form-control" type="password" id="Password" placeholder="*****"
+                                           name="Password"
+                                           value="{{ usuario.password }}" required>
+
+                                </div>
+                                <div class="col-md-6">
+                                    <label>Confirmar Contraseña</label>
+                                    <input class="form-control" type="password" id="againPassword" placeholder="*****"
+                                           name="againPassword"
+                                           value="{{ usuario.password }}" required>
+                                </div>
+                                <small style="color: #80898f">Utilice al menos 8 caracteres alfanuméricos.</small>
+                            </div>
                         </div>
 
                         <!--Campo Nombre-->
                         <div class="form-group">
-                            <label>Nombre</label>
-                            <input class="form-control" type="text" id="Nombre" placeholder="Carlos" name="Nombre"
-                                   value="{{ usuario.nombre }}" required>
+                            <div class="form-row">
+                                <div class="col-md-6">
+                                    <label>Nombre</label>
+                                    <input class="form-control" type="text" id="Nombre" placeholder="Carlos" name="Nombre"
+                                           value="{{ usuario.nombre }}" required>
+                                </div>
+                                <!--Campo Apellido-->
+                                <div class="col-md-6">
+                                    <label>Apellido</label>
+                                    <input class="form-control" type="text" id="Apellido" placeholder="Lopez"
+                                           name="Apellido"
+                                           value="{{ usuario.apellido }}" required>
+                                </div>
+                            </div>
                         </div>
 
-                        <!--Campo Apellido-->
+                        <!-- Campo Id/codigo-->
                         <div class="form-group">
-                            <label>Apellido</label>
-                            <input class="form-control" type="text" id="Apellido" placeholder="Lopez"
-                                   name="Apellido"
-                                   value="{{ usuario.apellido }}" required>
+                            <label>ID/Codigo</label>
+                                    <input class="form-control" type="text" id="codigo" placeholder="Ingrese codigo"
+                                       name="codigo">
                         </div>
+
 
                         <!-- Campo rol -->
                         <div class="form-group">
@@ -81,20 +105,24 @@
                         <!--Campo Administrador-->
                         <div class="form-group">
                             <div class="checkbox">
-                                <label>
-                                    <input type="checkbox" name="Administrador" value="True">Administrador
-                                </label>
+                                <label>Administrador</label>
+                                <select class="form-control" name="Administrador">
+                                    <option value="">--Seleccione--</option>
+                                    <option value="True">Si</option>
+                                    <option value="False">No</option>
+                                </select>
                             </div>
                         </div>
 
                         {% if action %}
                             <!--Campo Estado-->
                             <div class="form-group">
-                                <div class="checkbox">
-                                    <label>
-                                        <input type="checkbox" name="Estado" value="{{ usuario.is_active }}">Activo
-                                    </label>
-                                </div>
+                                <label>Estado</label>
+                                <select class="form-control" name="Estado">
+                                    <option value="">--Seleccione--</option>
+                                    <option value="True">Activo</option>
+                                    <option value="False">Inactivo</option>
+                                </select>
                             </div>
                         {% endif %}
 

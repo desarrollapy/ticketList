@@ -54,3 +54,8 @@ class Comentarios(models.Model):
     fechaComentario = models.DateTimeField(auto_now_add=True)
     ticket = models.ForeignKey(Ticket, null=True)
     lado = models.IntegerField()
+
+class Persona(models.Model):
+    usuario = models.ForeignKey(User)
+    codigo = models.CharField(max_length=128)
+    first_login = models.BooleanField(default=False)
