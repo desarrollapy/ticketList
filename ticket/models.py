@@ -28,9 +28,12 @@ class Ticket(models.Model):
     motivo = models.ForeignKey(Motivo, null=True, on_delete=models.CASCADE)
     central = models.ForeignKey(Central, null=False, on_delete=models.CASCADE)
     fechaCreacion = models.DateTimeField(auto_now_add=True)
+    fechaAtencion = models.DateTimeField(null=True, db_column='fecha_atencion');
+    fechaCierre = models.DateTimeField(null=True, db_column='fecha_cierre');
     usuarioCreacion = models.ForeignKey(User, related_name='usuario_creacion')
     usuarioEncargado = models.ForeignKey(User, related_name='usuario_encargado')
     estado = models.CharField(max_length=64)
+    numeroAfectado = models.CharField(max_length=128, db_column='numero_afectado', null=True)
 
     class Meta:
         permissions = (

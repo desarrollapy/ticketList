@@ -43,6 +43,13 @@
                                placeholder="Descripcion del inconveniente" name="descripcion"
                                value="{{ ticket.descripcionBreve }}" required>
                     </div>
+
+                    <div class="form-group" id="numeroField">
+                        <label for="desCorta">Numero afectado </label>
+                        <input class="form-control" id="numero"
+                               placeholder="Numero del afectado" name="numero"
+                               value="{{ ticket.numeroAfectado }}">
+                    </div>
                     <div style="text-align: center">
                         <input type=submit value="Guardar" class="btn btn-primary">
                     </div>

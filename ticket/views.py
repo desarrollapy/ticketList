@@ -12,6 +12,7 @@ from django.http import HttpResponseRedirect, HttpResponse
 from django.contrib import messages  # Para enviar mensajes de erorr al template.
 from django.core import  serializers
 import django.contrib.auth.password_validation as validators  # Para validar el password.
+import datetime
 
 # Create your views here.
 
@@ -609,6 +610,7 @@ def ticketGuardar(request):
     if request.method == 'POST':
         usuario = User.objects.get(id=request.user.id)
         descripcion = request.POST['descripcion']
+        numero = request.POST['numero']
         shelter = request.POST['shelter']
         inconveniente = Inconveniente.objects.get(id=request.POST['inconveniente'])
         central = Central.objects.get(id=1)
@@ -619,7 +621,8 @@ def ticketGuardar(request):
             central = central,
             usuarioCreacion = usuario,
             usuarioEncargado = usuario,
-            estado = 'PENDIENTE'
+            estado = 'PENDIENTE',
+            numeroAfectado=numero,
         )
         ticket.save()
         messages.add_message(request, messages.SUCCESS, 'Ticket Creado')
@@ -697,9 +700,17 @@ def ticketGuardarComentario(request, id):
 @login_required(login_url='/')
 @permission_required('ticket.view_ticket', raise_exception=True)
 def ticketPendientesList(request):
+    personasList = []
     ticketList = Ticket.objects.all().filter(estado__exact='PENDIENTE')
+
+    for ticket in ticketList:
+        persona = Persona.objects.get(id=ticket.usuarioCreacion.id)
+        personasList.append(persona.codigo)
+
+    lista = zip(ticketList, personasList)
+
     return render(request, "TicketList.html",{
-        "ticketList":ticketList,
+        "ticketList":lista,
         "titulo":"Tickets Pendientes",
         "pagina":"PENDIENTE"
     });
@@ -708,8 +719,16 @@ def ticketPendientesList(request):
 @permission_required('ticket.view_ticket', raise_exception=True)
 def ticketAntendidosList(request):
     ticketList = Ticket.objects.all().filter(estado__exact='ATENDIDO')
+    personasList = []
+    for ticket in ticketList:
+        persona = Persona.objects.get(id=ticket.usuarioCreacion.id)
+        personasList.append(persona.codigo)
+
+    lista = zip(ticketList, personasList)
+
+
     return render(request, "TicketList.html",{
-        "ticketList":ticketList,
+        "ticketList":lista,
         "titulo":"Tickets Atendidos",
         "pagina": "ATENDIDO"
     });
@@ -718,8 +737,14 @@ def ticketAntendidosList(request):
 @permission_required('ticket.view_ticket', raise_exception=True)
 def ticketSolucionadosList(request):
     ticketList = Ticket.objects.all().filter(estado__exact='SOLUCIONADO')
+    personasList = []
+    for ticket in ticketList:
+        persona = Persona.objects.get(id=ticket.usuarioCreacion.id)
+        personasList.append(persona.codigo)
+
+    lista = zip(ticketList, personasList)
     return render(request, "TicketList.html",{
-        "ticketList":ticketList,
+        "ticketList":lista,
         "titulo":"Tickets Solucionados",
         "pagina": "SOLUCIONADO"
     });
@@ -728,8 +753,14 @@ def ticketSolucionadosList(request):
 @permission_required('ticket.view_ticket', raise_exception=True)
 def ticketNoSolucionadosList(request):
     ticketList = Ticket.objects.all().filter(estado__exact='NO_SOLUCIONADO')
+    personasList = []
+    for ticket in ticketList:
+        persona = Persona.objects.get(id=ticket.usuarioCreacion.id)
+        personasList.append(persona.codigo)
+
+    lista = zip(ticketList, personasList)
     return render(request, "TicketList.html",{
-        "ticketList":ticketList,
+        "ticketList":lista,
         "titulo":"Tickets No Solucionados",
         "pagina": "NO_SOLUCIONADO"
     });
@@ -740,6 +771,7 @@ def ticketAtender(request, id):
     usuario = User.objects.get(id=request.user.id);
     ticket = Ticket.objects.get(id=id)
     ticket.estado = 'ATENDIDO'
+    ticket.fechaAtencion = datetime.datetime.now()
     ticket.usuarioEncargado = usuario
     ticket.save()
     messages.add_message(request, messages.SUCCESS, 'Ticket marcado como atendido')
@@ -753,6 +785,7 @@ def ticketSolucionado(request, id):
     if usuario.id == ticket.usuarioEncargado.id:
         ticket.estado = 'SOLUCIONADO'
         ticket.save()
+        ticket.fechaCierre = datetime.datetime.now()
         messages.add_message(request, messages.SUCCESS, 'Ticket marcado como solucionado')
         return HttpResponseRedirect('/ticket/atendidos')
     else:
@@ -787,8 +820,8 @@ def ticketNoSolucionar(request, id):
             motivo = Motivo.objects.get(id=request.POST['motivo'])
             ticket.motivo = motivo
             ticket.estado = "NO_SOLUCIONADO"
+            ticket.fechaCierre = datetime.datetime.now()
             ticket.save()
-
             messages.add_message(request, messages.SUCCESS, 'Ticket marcado como No solucionado')
             return HttpResponseRedirect('/ticket/atendidos')
 
@@ -800,8 +833,14 @@ def ticketNoSolucionar(request, id):
 def ticketMisTickets(request):
     usuario = User.objects.get(id=request.user.id)
     ticketList = Ticket.objects.all().filter(usuarioCreacion=usuario)
+    personasList = []
+    for ticket in ticketList:
+        persona = Persona.objects.get(id=ticket.usuarioCreacion.id)
+        personasList.append(persona.codigo)
+
+    lista = zip(ticketList, personasList)
     return render(request, "TicketList.html",{
-        "ticketList":ticketList,
+        "ticketList":lista,
         "titulo":"Mis Tickets",
         "pagina":"MISTICKETS"
     });

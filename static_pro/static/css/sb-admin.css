@@ -64,6 +64,9 @@ body.fixed-nav {
 .z-1 {
   z-index: 1;
 }
+.data-ticket{
+  font-size: 10px;
+}
 
 #mainNav .navbar-collapse {
   overflow: auto;

@@ -15,35 +15,34 @@
             <p class="card-text text-center" id="pushticket" hidden>
 
             </p>
-            {% for ticket in ticketList %}
+            {% for ticket, persona in ticketList %}
             <a class="list-group-item list-group-item-action" href="#">
                 <div class="media">
-                    <img class="d-flex mr-3 rounded-circle" src="http://placehold.it/45x45" alt="">
-                    <div class="media-body">
-
+                    <div class="media-body" style="line-height: 20%;">
                         <small style="color: #828e95"><strong>
-                            {{ ticket.usuarioCreacion }}
-                        </strong>creó un ticket:
-                        <strong>{{ ticket.inconveniente.descripcion }}</strong>
+                            #{{ ticket.id }} - {{ ticket.inconveniente.descripcion }}</strong>
                         &bull; {{ ticket.fechaCreacion | date:'d-m-Y H:i' }}
-                        {% if pagina == "MISTICKETS" %} &bull;
-                            {% if ticket.estado == 'PENDIENTE' %}
-                                <span class="badge badge-secondary">{{ ticket.estado }}</span>
-                            {% endif %}
-                            {% if ticket.estado == 'ATENDIDO' %}
-                                <span class="badge badge-warning">{{ ticket.estado }}</span>
-                            {% endif %}
-                            {% if ticket.estado == 'SOLUCIONADO' %}
-                                <span class="badge badge-success">{{ ticket.estado }}</span>
-                            {% endif %}
-                            {% if ticket.estado == 'NO_SOLUCIONADO' %}
-                                <span class="badge badge-danger">NO SOLUCIONADO</span>
-                            {% endif %}
+                            &bull;
+                        {% if ticket.estado == 'PENDIENTE' %}
+                            <span class="badge badge-secondary">{{ ticket.estado }}</span>
+                        {% endif %}
+                        {% if ticket.estado == 'ATENDIDO' %}
+                            <span class="badge badge-warning">{{ ticket.estado }}</span>
+                        {% endif %}
+                        {% if ticket.estado == 'SOLUCIONADO' %}
+                            <span class="badge badge-success">{{ ticket.estado }}</span>
+                        {% endif %}
+                        {% if ticket.estado == 'NO_SOLUCIONADO' %}
+                            <span class="badge badge-danger">NO SOLUCIONADO</span>
                         {% endif %}
 
+
                         </small>
-                        <br />
-                        <p>{{ ticket.descripcionBreve }}</p>
+                        <br /><br /><br /><br /><br /><br />
+                        <p> {{ ticket.descripcionBreve }} </p>
+                        <small> Shelter: <strong>{{ ticket.shelter }}</strong></small>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        <small>Numero: <strong>{{ ticket.numeroAfectado }}</strong></small>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        <small>Creado por: <strong>{{ ticket.usuarioCreacion }} - {{ persona }}</strong></small>
                         <div class="pull-right">
                             {% if perms.ticket.change_state_ticket %}
                             <div class="btn-group btn-group-sm" role="group" aria-label="Basic example">

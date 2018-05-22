@@ -74,11 +74,22 @@ WSGI_APPLICATION = 'TicketList.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/1.10/ref/settings/#databases
 
-DATABASES = {
+"""DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
     }
+}"""
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'ticketlist_db',
+        'USER': 'postgres',
+        'PASSWORD':'12admin34',
+        'HOST':'127.0.0.1',
+        'PORT':'5432',
+    },
 }
 
 
