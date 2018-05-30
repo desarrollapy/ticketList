@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+    <div class="container-fluid">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="/main"><i class="fa fa-home" aria-hidden="true"></i></a></li>
+            <li class="breadcrumb-item active">Mi Perfil</li>
+        </ol>
+
+        <div class="row">
+            <div class="col-lg-12">
+                <h2 class="page-header"></h2>
+            </div>
+            <!-- /.col-lg-12 -->
+        </div>
+
+        <div class="panel-body">
+            <div class="col-lg-12">
+                <div class="row">
+                    <!--Formulario para registrar/modificar un usuario.-->
+                    <form role="form">
+                        <div class="form-group">
+                            <div class="form-row">
+                                <div class="col-md-6">
+                                    <!--Campo Usuario-->
+                                    <label>Usuario</label>
+                                    <input class="form-control" type="text" id="Username" placeholder="ejemplo"
+                                       name="Usuario"
+                                       value="{{ usuario.username }}" disabled>
+
+                                </div>
+                                <div class="col-md-6">
+                                    <!--Campo Email-->
+                                    <label>Email</label>
+                                    <input class="form-control" type="email" id="Email" placeholder="ejemplo@mail.com"
+                                           name="Email"
+                                           value="{{ usuario.email }}"  disabled>
+                                </div>
+                            </div>
+                        </div>
+                        <!--Campo Nombre-->
+                        <div class="form-group">
+                            <div class="form-row">
+                                <div class="col-md-6">
+                                    <label>Nombre</label>
+                                    <input class="form-control" type="text" id="Nombre" placeholder="Carlos" name="Nombre"
+                                           value="{{ usuario.nombre }}" disabled>
+                                </div>
+                                <!--Campo Apellido-->
+                                <div class="col-md-6">
+                                    <label>Apellido</label>
+                                    <input class="form-control" type="text" id="Apellido" placeholder="Lopez"
+                                           name="Apellido"
+                                           value="{{ usuario.apellido }}" disabled>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Campo Id/codigo-->
+                        <div class="form-group">
+                            <label>ID/Codigo</label>
+                            <input class="form-control" type="text" id="codigo" placeholder="Ingrese codigo"
+                                       name="codigo" value="{{ persona.codigo }}" disabled>
+                        </div>
+                        <!-- Campo rol -->
+                        <div class="form-group">
+                            <label>Rol</label>
+                            <input class="form-control" type="text" id="rol" placeholder="Ingrese codigo"
+                                       name="codigo" value="{{ usuario.rol.descripcion }}" disabled>
+                        </div>
+                        <div style="text-align: center">
+                            <a href='/usuario/CambiarPassword/{{ request.user.id }}' class="btn btn-primary btn-sm">Cambiar Contraseña</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

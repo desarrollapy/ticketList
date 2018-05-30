@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+{% block content %}
+    <div class="container-fluid">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="/main"><i class="fa fa-home" aria-hidden="true"></i></a></li>
+            <li class="breadcrumb-item"><a href="/central/todos">Centrales</a></li>
+            <li class="breadcrumb-item active">{{ titulo }}</li>
+        </ol>
+
+        <div class="table-responsive">
+            <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                <thead>
+                    <tr>
+                      <th>#</th>
+                      <th>Central</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for central in centralList %}
+                    <tr>
+                        <td>{{central.id}}</td>
+                        <td>{{central.descripcion}}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endblock %}

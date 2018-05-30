@@ -15,7 +15,7 @@
             <p class="card-text text-center" id="pushticket" hidden>
 
             </p>
-            {% for ticket, persona in ticketList %}
+            {% for ticket in ticketList %}
             <a class="list-group-item list-group-item-action" href="#">
                 <div class="media">
                     <div class="media-body" style="line-height: 20%;">
@@ -42,7 +42,7 @@
                         <p> {{ ticket.descripcionBreve }} </p>
                         <small> Shelter: <strong>{{ ticket.shelter }}</strong></small>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                         <small>Numero: <strong>{{ ticket.numeroAfectado }}</strong></small>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                        <small>Creado por: <strong>{{ ticket.usuarioCreacion }} - {{ persona }}</strong></small>
+                        <small>Creado por: <strong>{{ ticket.usuarioCreacion }} - {{ ticket.codigo }}</strong></small>
                         <div class="pull-right">
                             {% if perms.ticket.change_state_ticket %}
                             <div class="btn-group btn-group-sm" role="group" aria-label="Basic example">

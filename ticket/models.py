@@ -33,12 +33,17 @@ class Ticket(models.Model):
     usuarioCreacion = models.ForeignKey(User, related_name='usuario_creacion')
     usuarioEncargado = models.ForeignKey(User, related_name='usuario_encargado')
     estado = models.CharField(max_length=64)
+    codigo = models.CharField(max_length=128, null=True)
     numeroAfectado = models.CharField(max_length=128, db_column='numero_afectado', null=True)
 
     class Meta:
         permissions = (
             ('change_state_ticket', 'Puede cambiar estado del ticket'),
             ('view_ticket', 'Puede listar los ticket'),
+            ('view_pendientes_ticket', 'Puede listar los ticket pendientes'),
+            ('view_atendidos_ticket', 'Puede listar los ticket atendidos'),
+            ('view_solucionados_ticket', 'Puede listar los ticket solucionados'),
+            ('view_no_solucionados_ticket', 'Puede listar los ticket no solucionados'),
         )
 
 class Comentarios(models.Model):

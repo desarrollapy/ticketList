@@ -29,7 +29,22 @@ def inicio(request):
         for obj in currentUser.groups.all():
             if(obj.id == 1):
                 return HttpResponseRedirect('/ticket/mis-tickets')
-        return render(request, "dashboard.html",{});
+
+        pendientes = Ticket.objects.filter(estado='PENDIENTE').count()
+        atendidos = Ticket.objects.filter(estado='ATENDIDO').count()
+        solucionados = Ticket.objects.filter(estado='SOLUCIONADO').count()
+        nosolucionados = Ticket.objects.filter(estado='NO_SOLUCIONADO').count()
+
+        topTickets = Ticket.objects.all().order_by('fechaCreacion')[:10]
+
+        return render(request, "dashboard.html",
+                      {
+                          "pendientes":pendientes,
+                          "atendidos":atendidos,
+                          "solucionados":solucionados,
+                          "nosolucionados":nosolucionados,
+                          "topTickets":topTickets,
+                      });
     else:
         return HttpResponseRedirect('/usuario/primer-login')
 
@@ -511,22 +526,15 @@ def UserPerfil(request):
         Vista para visualizar el perfil de un User registrado.
 
     """
-    UserRegistrado = request.user
-    id = UserRegistrado.id
+    usuario = User.objects.get(id=request.user.id)
+    persona = Persona.objects.filter(usuario=usuario)
+    persona = persona.first()
+    context = {
+        'usuario': usuario,
+        'persona': persona,
+        }
 
-    context = {'Email': UserRegistrado.email,
-               'User': UserRegistrado.username,
-               'Password': UserRegistrado.password,
-               'Nombre': UserRegistrado.nombre,
-               'Apellido': UserRegistrado.apellido,
-               'Administrador': UserRegistrado.is_superuser,
-               'Estado': UserRegistrado.is_active,
-               'ID': UserRegistrado.id,
-               'action': '/User/actualizar/' + str(id),
-               'titulo': 'Mi Perfil'
-               }
-
-    return render(request, 'UserDetallar.html', context)
+    return render(request, 'UserPerfil.html', context)
 
 
 @login_required(login_url='/')
@@ -609,6 +617,8 @@ def ticketGuardar(request):
     """
     if request.method == 'POST':
         usuario = User.objects.get(id=request.user.id)
+        persona = Persona.objects.filter(usuario = usuario)
+        codigo = persona.first().codigo
         descripcion = request.POST['descripcion']
         numero = request.POST['numero']
         shelter = request.POST['shelter']
@@ -623,6 +633,7 @@ def ticketGuardar(request):
             usuarioEncargado = usuario,
             estado = 'PENDIENTE',
             numeroAfectado=numero,
+            codigo=codigo,
         )
         ticket.save()
         messages.add_message(request, messages.SUCCESS, 'Ticket Creado')
@@ -700,17 +711,9 @@ def ticketGuardarComentario(request, id):
 @login_required(login_url='/')
 @permission_required('ticket.view_ticket', raise_exception=True)
 def ticketPendientesList(request):
-    personasList = []
     ticketList = Ticket.objects.all().filter(estado__exact='PENDIENTE')
-
-    for ticket in ticketList:
-        persona = Persona.objects.get(id=ticket.usuarioCreacion.id)
-        personasList.append(persona.codigo)
-
-    lista = zip(ticketList, personasList)
-
     return render(request, "TicketList.html",{
-        "ticketList":lista,
+        "ticketList":ticketList,
         "titulo":"Tickets Pendientes",
         "pagina":"PENDIENTE"
     });
@@ -719,16 +722,8 @@ def ticketPendientesList(request):
 @permission_required('ticket.view_ticket', raise_exception=True)
 def ticketAntendidosList(request):
     ticketList = Ticket.objects.all().filter(estado__exact='ATENDIDO')
-    personasList = []
-    for ticket in ticketList:
-        persona = Persona.objects.get(id=ticket.usuarioCreacion.id)
-        personasList.append(persona.codigo)
-
-    lista = zip(ticketList, personasList)
-
-
     return render(request, "TicketList.html",{
-        "ticketList":lista,
+        "ticketList":ticketList,
         "titulo":"Tickets Atendidos",
         "pagina": "ATENDIDO"
     });
@@ -737,14 +732,8 @@ def ticketAntendidosList(request):
 @permission_required('ticket.view_ticket', raise_exception=True)
 def ticketSolucionadosList(request):
     ticketList = Ticket.objects.all().filter(estado__exact='SOLUCIONADO')
-    personasList = []
-    for ticket in ticketList:
-        persona = Persona.objects.get(id=ticket.usuarioCreacion.id)
-        personasList.append(persona.codigo)
-
-    lista = zip(ticketList, personasList)
     return render(request, "TicketList.html",{
-        "ticketList":lista,
+        "ticketList":ticketList,
         "titulo":"Tickets Solucionados",
         "pagina": "SOLUCIONADO"
     });
@@ -753,14 +742,8 @@ def ticketSolucionadosList(request):
 @permission_required('ticket.view_ticket', raise_exception=True)
 def ticketNoSolucionadosList(request):
     ticketList = Ticket.objects.all().filter(estado__exact='NO_SOLUCIONADO')
-    personasList = []
-    for ticket in ticketList:
-        persona = Persona.objects.get(id=ticket.usuarioCreacion.id)
-        personasList.append(persona.codigo)
-
-    lista = zip(ticketList, personasList)
     return render(request, "TicketList.html",{
-        "ticketList":lista,
+        "ticketList":ticketList,
         "titulo":"Tickets No Solucionados",
         "pagina": "NO_SOLUCIONADO"
     });
@@ -833,14 +816,8 @@ def ticketNoSolucionar(request, id):
 def ticketMisTickets(request):
     usuario = User.objects.get(id=request.user.id)
     ticketList = Ticket.objects.all().filter(usuarioCreacion=usuario)
-    personasList = []
-    for ticket in ticketList:
-        persona = Persona.objects.get(id=ticket.usuarioCreacion.id)
-        personasList.append(persona.codigo)
-
-    lista = zip(ticketList, personasList)
     return render(request, "TicketList.html",{
-        "ticketList":lista,
+        "ticketList":ticketList,
         "titulo":"Mis Tickets",
         "pagina":"MISTICKETS"
     });
@@ -849,7 +826,16 @@ def ticketMisTickets(request):
 def ticketPushActualizaciones(request):
     usuario = User.objects.get(id=request.user.id)
     pagina = request.GET.get('estado')
-    print(pagina)
     ticketList = Ticket.objects.all().filter(estado__exact=pagina)
     data = serializers.serialize('json', ticketList)
     return HttpResponse(data, content_type='application/json')
+
+
+
+@login_required(login_url='/')
+def centralesList(request):
+    centrales = Central.objects.all();
+    return render(request, "CentralList.html", {
+        "centralList":centrales,
+    })
+

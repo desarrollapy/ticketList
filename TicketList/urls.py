@@ -42,7 +42,10 @@ urlpatterns = [
     url(r'^usuario/perfil', views.UserPerfil, name="UsuarioPerfil"),
     url(r'^usuario/CambiarPassword/(?P<id>\d+)', views.UserCambiarPassword, name="UsuarioCambiarPassword"),
     url(r'^usuario/primer-login', views.primerLogin, name="PrimerLogin"),
+    url(r'^mi-cuenta', views.UserPerfil, name="MiCuenta"),
 
+
+    url(r'^centrales/todos', views.centralesList, name="centralesList"),
     # Navegacion de Tickets.
     url(r'^ticket/registrar', views.ticketAgregar, name="TicketRegistrar"),
     url(r'^ticket/guardar', views.ticketGuardar, name="TicketGuardar"),
