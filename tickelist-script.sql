@@ -11,10 +11,13 @@ INSERT INTO ticket_inconveniente (id,descripcion) VALUES (2,'NO REALIZA LLAMADA'
 INSERT INTO ticket_inconveniente (id,descripcion) VALUES (3,'NO RECIBE LLAMADA');
 INSERT INTO ticket_inconveniente (id,descripcion) VALUES (4,'REPOSICION DE NUMERO');
 
--- Borrando permisos que son no necesarios
-delete from auth_permission where id <= 18
+INSERT INTO ticket_central (id,descripcion) VALUES (1,'CENTRAL PRINCIPAL');
 
-insert into auth_user values(nextval('auth_user_id_seq'),'pbkdf2_sha256$30000$Kb2Tfqcg121P$EI6daUReEJ/8hIFVkbNZaTYi0necEZ4GMz/hh/XZwbw=', now(), true,'admin','admin@ticket.co',true,true,now())
+-- Borrando permisos que son no necesarios
+delete from auth_permission where id <= 18;
+
+insert into auth_user(id, password, last_login, is_superuser, username, first_name, last_name, email,is_staff, is_active, date_joined)
+values(nextval('auth_user_id_seq'),'pbkdf2_sha256$30000$Kb2Tfqcg121P$EI6daUReEJ/8hIFVkbNZaTYi0necEZ4GMz/hh/XZwbw=', now(), true,'admin','','','admin@ticket.co',true,true,now());
 
 -- Datos de Administrador
 insert into ticket_persona(id,codigo, first_login, usuario_id)
