@@ -35,6 +35,7 @@ class Ticket(models.Model):
     estado = models.CharField(max_length=64)
     codigo = models.CharField(max_length=128, null=True)
     numeroAfectado = models.CharField(max_length=128, db_column='numero_afectado', null=True)
+    fechaModificacion = models.DateTimeField(auto_now=True)
 
     class Meta:
         permissions = (

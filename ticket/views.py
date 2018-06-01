@@ -35,7 +35,7 @@ def inicio(request):
         solucionados = Ticket.objects.filter(estado='SOLUCIONADO').count()
         nosolucionados = Ticket.objects.filter(estado='NO_SOLUCIONADO').count()
 
-        topTickets = Ticket.objects.all().order_by('fechaCreacion')[:10]
+        topTickets = Ticket.objects.all().order_by('-fechaModificacion')[:10]
 
         return render(request, "dashboard.html",
                       {

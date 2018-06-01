@@ -65,14 +65,18 @@
             <div class="date">{{ ticket.fechaCreacion | date:'d-m-Y H:i'}}</div>
             <div class="text">Creado por {{ ticket.usuarioCreacion }} </div>
           </div>
+            {% if ticket.estado == 'ATENDIDO' or ticket.estado == 'SOLUCIONADO' or ticket.estado == 'NO_SOLUCIONADO' %}
           <div class="feed-item">
             <div class="date">{{ ticket.fechaAtencion | date:'d-m-Y H:i'}}</div>
             <div class="text">Atendido por {{ ticket.usuarioEncargado }}</div>
           </div>
+            {% endif %}
+            {% if ticket.estado == 'SOLUCIONADO' or ticket.estado == 'NO_SOLUCIONADO'%}
           <div class="feed-item">
             <div class="date">{{ ticket.fechaCierre | date:'d-m-Y H:i'}}</div>
             <div class="text">Cerrado por {{ ticket.usuarioEncargado }} </div>
           </div>
+            {% endif %}
         </div>
         <hr>
           <!-- Comments Form -->
