@@ -25,6 +25,7 @@ Instalación de DJango
 
 ```
 pip install django==1.10
+pip install psycopg2
 ```
 
 Clonar el proyecto
@@ -36,6 +37,8 @@ git clone https://github.com/desarrollapy/ticketList.git
 Ejecutar el proyecto
 ```
 cd ticketList
+python manage.py migrate
+// run tickelist-script.sql in your SGBD
 python manage.py runserver
 ```
 
