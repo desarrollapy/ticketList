@@ -14,6 +14,7 @@ INSERT INTO ticket_inconveniente (id,descripcion) VALUES (4,'REPOSICION DE NUMER
 -- Borrando permisos que son no necesarios
 delete from auth_permission where id <= 18
 
+insert into auth_user values(nextval('auth_user_id_seq'),'pbkdf2_sha256$30000$Kb2Tfqcg121P$EI6daUReEJ/8hIFVkbNZaTYi0necEZ4GMz/hh/XZwbw=', now(), true,'admin','admin@ticket.co',true,true,now())
 
 -- Datos de Administrador
 insert into ticket_persona(id,codigo, first_login, usuario_id)
