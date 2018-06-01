@@ -84,7 +84,7 @@ WSGI_APPLICATION = 'TicketList.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'ticketlist_db_test',
+        'NAME': 'ticketlist_db',
         'USER': 'postgres',
         'PASSWORD':'12admin34',
         'HOST':'127.0.0.1',
