@@ -435,26 +435,23 @@ def UserDetallar(request, id):
         UserRegistrado = User.objects.get(id=id)
         roles = Group.objects.all()
         rolRegistrado = UserRegistrado.groups.all()
+        persona = Persona.objects.filter(usuario=UserRegistrado)
+        persona = persona.first();
         if(rolRegistrado.count() > 0 ):
             rolRegistrado = rolRegistrado[0]
         else :
             rolRegistrado = {}
 
-        context = {'Email': UserRegistrado.email,
-                   'Usuario': UserRegistrado.username,
-                   'Password': UserRegistrado.password,
-                   'Nombre': UserRegistrado.first_name,
-                   'Apellido': UserRegistrado.last_name,
-                   'Administrador': UserRegistrado.is_superuser,
-                   'Estado': UserRegistrado.is_active,
+        context = {'usuario': UserRegistrado,
                    'ID': UserRegistrado.id,
                    'action': '/usuario/actualizar/' + id,
                    'titulo': 'Modificar',
+                   'persona':persona,
                    'roles':roles,
                    'rolRegistrado': rolRegistrado,
                    }
 
-        return render(request, 'UserDetallar.html', context)
+        return render(request, 'UserRegistrar.html', context)
     else:
         data = {
             'error': 'detallar Users'
@@ -472,32 +469,28 @@ def UserActualizar(request, id):
     if (currentUser.is_superuser):
 
         UserRegistrado = User.objects.get(id=id)
-
+        persona = Persona.objects.filter(usuario=UserRegistrado)
+        persona = persona.first();
         if request.method == "POST":
             form = RegistrarUserForm(request.POST)
             print form.errors
-            if form.is_valid():
-                UserRegistrado.email = form.cleaned_data['Email'].lower()
-                UserRegistrado.username = form.cleaned_data['Usuario'].lower()
-                UserRegistrado.nombre = form.cleaned_data['Nombre']
-                UserRegistrado.apellido = form.cleaned_data['Apellido']
-                UserRegistrado.is_superuser = form.cleaned_data['Administrador']
-                UserRegistrado.is_active = form.cleaned_data['Estado']
-                UserRegistrado.groups.clear()
-                rol = Group.objects.get(id=request.POST['rol'])
-                UserRegistrado.groups.add(rol)
+            UserRegistrado.email = form.cleaned_data['Email'].lower()
+            UserRegistrado.username = form.cleaned_data['Usuario'].lower()
+            UserRegistrado.nombre = form.cleaned_data['Nombre']
+            UserRegistrado.apellido = form.cleaned_data['Apellido']
+            UserRegistrado.is_superuser = form.cleaned_data['Administrador']
+            UserRegistrado.is_active = form.cleaned_data['Estado']
+            persona.codigo = form.cleaned_data['codigo']
+
+            UserRegistrado.groups.clear()
+            rol = Group.objects.get(id=request.POST['rol'])
+            UserRegistrado.groups.add(rol)
+
             try:
 
                 UserRegistrado.save()
-
+                persona.save();
                 messages.add_message(request, messages.SUCCESS, 'User modificado.')
-                context = {'Email': UserRegistrado.email,
-                           'User': UserRegistrado.username,
-                           'Nombre': UserRegistrado.nombre,
-                           'Apellido': UserRegistrado.apellido,
-                           'Administrador': UserRegistrado.is_superuser,
-                           'Estado': UserRegistrado.is_active,
-                           }
                 return HttpResponseRedirect('/usuario/detallar/' + id)
                 # return render(request, 'UserDetallar.html', context)
 

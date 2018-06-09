@@ -45,7 +45,7 @@
                             </div>
                         </div>
 
-                        <!--Campo Password-->
+                        {% if titulo != 'Modificar' %}<!--Campo Password-->
                         <div class="form-group">
                             <div class="form-row">
                                 <div class="col-md-6">
@@ -64,6 +64,7 @@
                                 <small style="color: #80898f">Utilice al menos 8 caracteres alfanuméricos.</small>
                             </div>
                         </div>
+                        {% endif %}
 
                         <!--Campo Nombre-->
                         <div class="form-group">
@@ -71,14 +72,14 @@
                                 <div class="col-md-6">
                                     <label>Nombre</label>
                                     <input class="form-control" type="text" id="Nombre" placeholder="Carlos" name="Nombre"
-                                           value="{{ usuario.nombre }}" required>
+                                           value="{{ usuario.first_name }}" required>
                                 </div>
                                 <!--Campo Apellido-->
                                 <div class="col-md-6">
                                     <label>Apellido</label>
                                     <input class="form-control" type="text" id="Apellido" placeholder="Lopez"
                                            name="Apellido"
-                                           value="{{ usuario.apellido }}" required>
+                                           value="{{ usuario.last_name }}" required>
                                 </div>
                             </div>
                         </div>
@@ -87,7 +88,7 @@
                         <div class="form-group">
                             <label>ID/Codigo</label>
                                     <input class="form-control" type="text" id="codigo" placeholder="Ingrese codigo"
-                                       name="codigo">
+                                       name="codigo" value="{{ persona.codigo }}">
                         </div>
 
 
@@ -97,7 +98,8 @@
                             <select class="form-control" name="rol">
                                 <option value="">--Seleccione--</option>
                                 {% for rol in roles %}
-                                    <option value="{{ rol.id }}">{{ rol.name }}</option>
+                                    <option value="{{ rol.id }}"
+                                            {% if rol.id == rolRegistrado.id %} selected {% endif %}>{{ rol.name }}</option>
                                 {% endfor %}
                             </select>
                         </div>
@@ -108,27 +110,28 @@
                                 <label>Administrador</label>
                                 <select class="form-control" name="Administrador">
                                     <option value="">--Seleccione--</option>
-                                    <option value="True">Si</option>
-                                    <option value="False">No</option>
+                                    <option value="True"
+                                            {% if usuario.is_superuser == True %} selected {% endif %}>Si</option>
+                                    <option value="False"
+                                            {% if usuario.is_superuser == False %} selected {% endif %}>No</option>
                                 </select>
                             </div>
                         </div>
-
-                        {% if action %}
-                            <!--Campo Estado-->
-                            <div class="form-group">
-                                <label>Estado</label>
-                                <select class="form-control" name="Estado">
-                                    <option value="">--Seleccione--</option>
-                                    <option value="True">Activo</option>
-                                    <option value="False">Inactivo</option>
-                                </select>
-                            </div>
-                        {% endif %}
+                        <!--Campo Estado-->
+                        <div class="form-group">
+                            <label>Estado</label>
+                            <select class="form-control" name="Estado">
+                                <option value="">--Seleccione--</option>
+                                <option value="True"
+                                {% if usuario.is_active == True %} selected {% endif %}>Activo</option>
+                                <option value="False"
+                                {% if usuario.is_active == False %} selected {% endif %}>Inactivo</option>
+                            </select>
+                        </div>
 
                         <!--Botón Registrar-->
                         <div style="text-align: center">
-                            <button type="submit" class="btn btn-primary">Registrar</button>
+                            <button type="submit" class="btn btn-primary">Guardar</button>
                         </div>
                     </form>
                 </div>
